@@ -57,7 +57,7 @@
     </style>
 </head>
 <body class="font-system bg-pageBg text-textMain h-screen flex overflow-hidden">
-    <!-- 左侧侧边栏（由navigation.js统一渲染） -->
+    <!-- 左侧侧边栏（由navigation.js?v=20260903-6统一渲染） -->
     <aside></aside>
 
     <!-- 主内容区域 -->
@@ -400,6 +400,6 @@
         document.querySelectorAll('[data-hazard-detail-tab]').forEach(button => button.addEventListener('click', () => { const info = button.dataset.hazardDetailTab === 'info'; document.getElementById('hazardInfoPanel').classList.toggle('hidden', !info); document.getElementById('hazardRecordPanel').classList.toggle('hidden', info); document.querySelectorAll('.hazard-detail-tab').forEach(tab => tab.className = `hazard-detail-tab border px-10 py-2 text-sm ${tab === button ? 'bg-primary text-white border-primary' : 'border-borderLine'}`); }));
         renderFindingTable('violation');
     </script>
-    <script src="navigation.js?v=20260819-2"></script>
+    <script src="navigation.js?v=20260903-6"></script>
 </body>
 </html>

@@ -40,5 +40,5 @@ function renderChart(days=30){const data=makeTrend(days);chart.setOption({toolti
 document.querySelectorAll('.range-button').forEach(button=>button.onclick=()=>{document.querySelectorAll('.range-button').forEach(item=>item.classList.remove('active'));button.classList.add('active');const custom=button.dataset.range==='custom';document.getElementById('customDates').className=custom?'flex items-center gap-2 ml-1':'hidden items-center gap-2 ml-1';if(!custom)renderChart(Number(button.dataset.range))});document.getElementById('applyCustom').onclick=()=>{const start=document.getElementById('startDate').value,end=document.getElementById('endDate').value;if(!start||!end)return;const days=Math.max(7,Math.round((new Date(end)-new Date(start))/86400000));renderChart(days)};window.addEventListener('resize',()=>chart.resize());
 document.querySelectorAll('[data-unit]').forEach(button=>button.onclick=()=>{const url=new URL(location.href);url.searchParams.set('unit',button.dataset.unit);history.replaceState({},'',url);document.querySelectorAll('[data-unit]').forEach(item=>item.classList.toggle('text-primary',item===button));});
 </script>
-<script src="navigation.js?v=20260819-2"></script>
+<script src="navigation.js?v=20260903-6"></script>
 </body></html>

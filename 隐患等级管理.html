@@ -23,5 +23,5 @@
     function close(){document.getElementById('modal').classList.add('hidden');document.getElementById('modal').classList.remove('flex')}function bind(){document.querySelectorAll('.edit').forEach(b=>b.onclick=()=>open(+b.dataset.i));document.querySelectorAll('.delete').forEach(b=>b.onclick=()=>{levels.splice(+b.dataset.i,1);render()});document.querySelectorAll('.status').forEach(b=>b.onclick=()=>{const x=levels[+b.dataset.i];x.status=x.status==='启用'?'停用':'启用';render()})}
     document.getElementById('add').onclick=()=>open();document.querySelectorAll('[data-close]').forEach(b=>b.onclick=close);document.getElementById('form').onsubmit=e=>{e.preventDefault();const x={name:levelName.value.trim(),code:levelCode.value.trim(),color:levelColor.value,time:deadline.value||'待设置',req:requirement.value||'暂无',status:edit<0?'启用':levels[edit].status};edit<0?levels.push(x):levels[edit]=x;close();render()};search.oninput=render;statusFilter.onchange=render;render();
   </script>
-  <script src="navigation.js?v=20260819-2"></script>
+  <script src="navigation.js?v=20260903-6"></script>
 </body></html>

@@ -876,7 +876,7 @@
     document.querySelectorAll('.tab').forEach(tab => tab.onclick = () => { document.querySelectorAll('.tab').forEach(x => x.classList.remove('active')); tab.classList.add('active'); active = tab.dataset.filter; renderImages() }); search.oninput = renderImages; unitFilter.onchange = renderImages; sourceTypeFilter.onchange = renderImages; updateTabCounts(); renderImages();
     document.getElementById('exportBtn').onclick = () => showToast('数据集图片清单已生成'); function showToast(t) { const el = document.getElementById('toast2'); el.textContent = t; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 1800) }
   </script>
-  <script src="navigation.js"></script>
+  <script src="navigation.js?v=20260903-6"></script>
 </body>
 
 </html>

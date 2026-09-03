@@ -95,7 +95,23 @@
             grid-template-rows:repeat(3,minmax(0,1fr));
         }
         .video-grid.grid-nine-layout > div:not(.hidden) { min-height:0;display:flex;flex-direction:column; }
-        .video-grid.grid-nine-layout .video-img-wrap { height:auto!important;min-height:0;flex:1; }
+.video-grid.grid-nine-layout .video-img-wrap { height:auto!important;min-height:0;flex:1; }
+.video-grid .px-3.pb-3.flex {
+    align-items: center;
+    min-height: 34px;
+}
+.video-grid .px-3.pb-3.flex > button,
+.video-grid .px-3.pb-3.flex > .fa-expand {
+    width: 28px;
+    height: 28px;
+    margin: 0;
+    padding: 0 !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    flex: 0 0 28px;
+}
     </style>
 </head>
 <body class="font-inter bg-darkBg text-textMain h-screen overflow-hidden flex">
@@ -209,7 +225,7 @@
             <!-- 左侧摄像头列表（增加Tab） -->
             <div class="w-[280px] bg-darkPanel border-r border-darkBorder flex flex-col">
                 <div class="px-4 py-4 border-b border-darkBorder">
-                    <div class="flex">
+                    <div id="left-tabs" class="flex">
                         <div id="tab-area" class="flex-1 text-center py-2 cursor-pointer text-sm tab-active" onclick="switchLeftTab('area')">作业区域</div>
                         <div id="tab-plan" class="flex-1 text-center py-2 cursor-pointer text-sm text-textSecondary" onclick="switchLeftTab('plan')">作业计划</div>
                     </div>
@@ -1337,6 +1353,7 @@
         function initializePlanLink() {
             const params = new URLSearchParams(window.location.search);
             const targetTab = params.get('tab');
+            const mode = params.get('mode');
             const jobName = params.get('job');
             const fromPage = params.get('from');
             const returnButton = document.getElementById('returnToSource');
@@ -1349,7 +1366,13 @@
                 returnButton.classList.remove('hidden');
                 returnButton.addEventListener('click', () => { window.location.href = fromPage; });
             }
-            if (targetTab === 'plan' || jobName) switchLeftTab('plan');
+            if (mode === 'key-area') {
+                switchLeftTab('area');
+                document.getElementById('left-tabs').classList.add('hidden');
+            } else if (mode === 'work-monitor') {
+                switchLeftTab('plan');
+                document.getElementById('left-tabs').classList.add('hidden');
+            } else if (targetTab === 'plan' || jobName) switchLeftTab('plan');
             if (!jobName) return;
 
             document.getElementById('currentPlanName').textContent = jobName;
@@ -1567,7 +1590,7 @@
             window.location.href = 'AI预警实时和倒查标记.html';
         }
     </script>
-    <script src="navigation.js?v=20260903-5"></script>
+    <script src="navigation.js?v=20260903-6"></script>
     <script>
         (() => {
             const d = document;
@@ -1575,6 +1598,28 @@
             const gridSelect = d.getElementById('grid-select');
             const autoPlay = d.getElementById('auto-sort-play');
             const cards = [...grid.children].filter(item => item.querySelector('.video-img-wrap'));
+            const dangerScenes = [
+                ['assets/danger-scenes/high-altitude-maintenance.png', '高处设备检修监控画面'],
+                ['assets/danger-scenes/haul-truck-corridor.png', '矿区运输通道监控画面'],
+                ['assets/danger-scenes/high-altitude-maintenance.png', '高空作业监控画面'],
+                ['assets/danger-scenes/hot-work-welding.png', '工业动火作业监控画面'],
+                ['assets/danger-scenes/haul-truck-corridor.png', '采矿运输作业监控画面'],
+                ['assets/danger-scenes/crane-lifting.png', '大型吊装作业监控画面'],
+                ['assets/danger-scenes/hot-work-welding.png', '焊接作业监控画面'],
+                ['assets/danger-scenes/crane-lifting.png', '设备吊装监控画面'],
+                ['assets/danger-scenes/high-altitude-maintenance.png', '高处巡检作业监控画面'],
+                ['assets/danger-scenes/hot-work-welding.png', '支护检修作业监控画面'],
+                ['assets/danger-scenes/haul-truck-corridor.png', '运输巷作业监控画面'],
+                ['assets/danger-scenes/crane-lifting.png', '厂区起重作业监控画面']
+            ];
+            cards.forEach((card, index) => {
+                const image = card.querySelector('.video-img-wrap img');
+                const scene = dangerScenes[index % dangerScenes.length];
+                if (!image) return;
+                image.src = scene[0];
+                image.alt = scene[1];
+                image.loading = index < 3 ? 'eager' : 'lazy';
+            });
             const cardName = card => card.querySelector('.px-3.py-2 .text-sm')?.textContent.trim() || '';
             const cardMap = new Map(cards.filter(card => cardName(card)).map(card => [cardName(card), card]));
             let manualSelection = [];

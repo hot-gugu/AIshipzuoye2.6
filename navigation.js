@@ -1,23 +1,23 @@
 (() => {
-  const SIDEBAR_WIDTH = 240;
-
   const menuGroups = [
-    { title: '首页', icon: 'fa-home', href: '首页.html' },
-    { title: '监测一张图', icon: 'fa-picture-o', href: '方案图册.html' },
     {
       title: '智能监护中心',
       icon: 'fa-shield',
+      center: 'monitor',
+      href: '首页.html?center=monitor',
       children: [
+        { title: '首页', icon: 'fa-home', href: '首页.html' },
+        { title: '监测一张图', icon: 'fa-picture-o', href: '方案图册.html' },
         {
-          title: '作业智能监测',
+          title: '作业智能监护',
           icon: 'fa-video-camera',
           children: [
             { title: '作业计划管理', href: '作业计划管理.html' },
-            { title: '作业智能监测', href: '实时监控.html' },
+            { title: '作业智能监测', href: '实时监控.html?mode=work-monitor' },
             { title: '事后视频倒查', href: '视频倒查列表页面.html' }
           ]
         },
-        { title: '重点区域监测', icon: 'fa-map-marker' },
+        { title: '重点区域监护', icon: 'fa-map-marker', href: '实时监控.html?mode=key-area' },
         { title: 'AI预警核查', icon: 'fa-bell', href: 'AI隐患核查.html' },
         {
           title: '隐患违章管理',
@@ -35,12 +35,29 @@
             { title: '违章统计分析', href: '违章统计分析.html' },
             { title: '隐患统计分析', href: '隐患统计分析.html' }
           ]
+        },
+        {
+          title: '基础管理',
+          icon: 'fa-sliders',
+          children: [
+            { title: '违章规则管理', href: '违章规则管理.html' },
+            { title: '违章类型管理', href: '违章类型管理.html' },
+            { title: '违章等级管理', href: '违章等级管理.html' },
+            { title: '隐患分类管理', href: '隐患分类管理.html' },
+            { title: '隐患等级管理', href: '隐患等级管理.html' },
+            { title: '作业区域管理', href: '作业区域管理.html' },
+            { title: '作业类型管理', href: '作业类型管理.html' },
+            { title: '人脸采集库', href: '人脸采集库.html' },
+            { title: '作业班次', href: '作业班次.html' }
+          ]
         }
       ]
     },
     {
       title: '算法训练中心',
       icon: 'fa-graduation-cap',
+      center: 'training',
+      href: '算法精准度分析列表.html?center=training',
       children: [
         {
           title: '算法管理',
@@ -80,30 +97,29 @@
     {
       title: '智能调度中心',
       icon: 'fa-microchip',
+      center: 'dispatch',
+      href: '算力智能调度简版.html?center=dispatch',
       children: [
         { title: '设备管理', href: '设备管理列表.html' },
         { title: '算力智能调度', href: '算力智能调度简版.html' }
       ]
     },
     {
-      title: '基础配置中心',
-      icon: 'fa-cogs',
+      title: '视频汇聚中心',
+      icon: 'fa-video-camera',
+      center: 'video',
+      href: '视频汇聚中心.html?center=video',
       children: [
-        {
-          title: '基础管理',
-          icon: 'fa-sliders',
-          children: [
-            { title: '违章规则管理', href: '违章规则管理.html' },
-            { title: '违章类型管理', href: '违章类型管理.html' },
-            { title: '违章等级管理', href: '违章等级管理.html' },
-            { title: '隐患分类管理', href: '隐患分类管理.html' },
-            { title: '隐患等级管理', href: '隐患等级管理.html' },
-            { title: '作业区域管理', href: '作业区域管理.html' },
-            { title: '作业类型管理', href: '作业类型管理.html' },
-            { title: '人脸采集库', href: '人脸采集库.html' },
-            { title: '作业班次', href: '作业班次.html' }
-          ]
-        },
+        { title: '视频汇聚总览', icon: 'fa-th-large', href: '视频汇聚中心.html' },
+        { title: '视频资源管理', icon: 'fa-camera' }
+      ]
+    },
+    {
+      title: '系统管理',
+      icon: 'fa-cogs',
+      center: 'system',
+      href: '系统管理.html?center=system',
+      children: [
         {
           title: '系统管理',
           icon: 'fa-gear',
@@ -115,8 +131,7 @@
           ]
         }
       ]
-    },
-    { title: '产品功能说明', icon: 'fa-book', href: '产品功能说明.html' }
+    }
   ];
 
   const actionRoutes = [
@@ -135,233 +150,380 @@
 
   const normalize = text => (text || '').replace(/\s+/g, '').trim();
   const currentFile = decodeURIComponent(location.pathname.split('/').pop() || '');
-  const isSamePage = href => currentFile === href;
+  const isSamePage = href => {
+    if (!href) return false;
+    const target = new URL(href, location.href);
+    return currentFile === decodeURIComponent(target.pathname.split('/').pop() || '') && location.search === target.search;
+  };
   const go = href => {
-    if (!isSamePage(href)) location.href = href;
+    const target = new URL(href, location.href);
+    if (location.pathname !== target.pathname || location.search !== target.search) location.href = href;
   };
 
   const flattenMenu = groups => groups.flatMap(group => group.children ? group.children : [group]);
-  const activeGroup = group => group.children?.some(child => isSamePage(child.href) || activeGroup(child));
+  const activeGroup = group => isSamePage(group.href) || group.children?.some(child => isSamePage(child.href) || activeGroup(child));
+  const firstGroupHref = group => {
+    if (group.href) return group.href;
+    for (const child of group.children || []) {
+      const href = firstGroupHref(child);
+      if (href) return href;
+    }
+    return '';
+  };
 
   const injectStyle = () => {
     if (document.getElementById('unified-navigation-style')) return;
     const style = document.createElement('style');
     style.id = 'unified-navigation-style';
     style.textContent = `
-      .unified-sidebar {
+      :root { --unified-topnav-height: 68px; }
+      body.unified-topnav-page {
+        padding-top: var(--unified-topnav-height) !important;
+        min-width: 1080px;
+      }
+      body.unified-topnav-page > aside:not([data-keep-sidebar]) { display: none !important; }
+      .unified-topnav {
         position: fixed !important;
         left: 0 !important;
         top: 0 !important;
-        bottom: 0 !important;
-        width: ${SIDEBAR_WIDTH}px !important;
-        min-width: ${SIDEBAR_WIDTH}px !important;
-        z-index: 9999 !important;
-        background: #0f244e !important;
-        color: #dbe7ff !important;
+        right: 0 !important;
+        height: var(--unified-topnav-height) !important;
+        z-index: 1000 !important;
+        background: #07162f !important;
+        color: #dceeff !important;
         display: flex !important;
-        flex-direction: column !important;
-        overflow: hidden !important;
-        box-shadow: 4px 0 18px rgba(15, 36, 78, 0.16) !important;
+        align-items: stretch !important;
+        border-bottom: 1px solid #194a7c;
+        box-shadow: 0 3px 10px rgba(3, 15, 35, .22) !important;
       }
-      .unified-sidebar * { box-sizing: border-box; }
-      .unified-sidebar-logo {
-        height: 72px;
-        padding: 16px 18px;
+      .unified-topnav, .unified-topnav * { box-sizing: border-box; }
+      .unified-nav-side {
+        flex: 1 1 0;
         display: flex;
         align-items: center;
-        gap: 12px;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-        flex-shrink: 0;
+        gap: 8px;
+        min-width: 0;
+        padding: 0 22px;
       }
-      .unified-logo-mark {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
-        background: #fff;
-        color: #165dff;
+      .unified-nav-side--left { justify-content: flex-end; }
+      .unified-nav-side--right { justify-content: flex-start; }
+      .unified-brand {
+        position: relative;
+        isolation: isolate;
+        width: clamp(390px, 32vw, 560px);
+        min-width: 390px;
+        height: 56px;
+        margin-top: 5px;
+        padding: 0 54px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 700;
-        font-size: 18px;
-      }
-      .unified-menu {
-        flex: 1;
-        padding: 14px 10px 18px;
-        overflow-y: auto;
-      }
-      .unified-menu::-webkit-scrollbar { width: 5px; }
-      .unified-menu::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 999px; }
-      .unified-menu-item,
-      .unified-menu-group-title {
-        min-height: 42px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 12px;
-        color: #c7d5f5;
+        gap: 14px;
+        color: #eaf7ff;
         text-decoration: none;
-        font-size: 14px;
-        line-height: 1.2;
-        transition: all .18s ease;
+        text-shadow: 0 0 12px rgba(63, 184, 255, .45);
       }
-      .unified-menu-item:hover {
-        background: rgba(255,255,255,0.09);
-        color: #fff;
-        transform: translateX(2px);
+      .unified-brand::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: linear-gradient(180deg, #0c315c 0%, #082341 100%);
+        border: 1px solid #2aa8f0;
+        clip-path: polygon(7% 0, 93% 0, 86% 100%, 14% 100%);
+        box-shadow: inset 0 0 18px rgba(39, 165, 239, .28);
       }
-      .unified-menu-item.active {
-        background: rgba(22,93,255,0.28);
-        color: #fff;
-        font-weight: 600;
-        box-shadow: inset 3px 0 0 #4f8cff;
+      .unified-brand-mark {
+        width: 34px;
+        height: 34px;
+        border: 1px solid #55c4ff;
+        color: #7ed7ff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 12px;
+        box-shadow: inset 0 0 9px rgba(65, 190, 255, .35);
       }
-      .unified-menu-group { margin-top: 4px; }
-      .unified-menu-group-title {
-        color: #8fa4cf;
-        font-weight: 600;
+      .unified-brand-name {
+        font-size: clamp(17px, 1.4vw, 23px);
+        font-weight: 700;
+        letter-spacing: .08em;
+        white-space: nowrap;
+      }
+      .unified-nav-group { position: relative; height: 100%; display: flex; align-items: center; }
+      .unified-nav-trigger {
+        height: 42px;
+        min-width: 132px;
+        padding: 0 18px;
+        border: 0;
+        background: transparent;
+        color: #94c9ee;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        font: 600 15px/1 "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
         cursor: pointer;
-        justify-content: space-between;
+        transition: color .18s ease, background-color .18s ease;
       }
-      .unified-menu-group-title:hover { background: rgba(255,255,255,0.07); color: #fff; }
-      .unified-menu-group-title.active { color: #fff; }
-      .unified-menu-group-title > .fa-angle-down { transition: transform .18s ease; }
-      .unified-menu-group.collapsed > .unified-menu-group-title > .fa-angle-down { transform: rotate(-90deg); }
-      .unified-menu-group.collapsed > .unified-menu-children { display: none; }
-      .unified-group-main {
+      .unified-nav-trigger::after {
+        content: '';
+        width: 1px;
+        height: 20px;
+        margin-left: 12px;
+        background: #2771aa;
+        transform: skew(-25deg);
+      }
+      .unified-nav-group:last-child .unified-nav-trigger::after { display: none; }
+      .unified-nav-trigger:hover,
+      .unified-nav-trigger:focus-visible,
+      .unified-nav-group.active > .unified-nav-trigger {
+        color: #fff;
+        background: rgba(30, 137, 214, .18);
+        outline: none;
+      }
+      .unified-nav-group.active > .unified-nav-trigger { box-shadow: inset 0 -3px 0 #27aaf5; }
+      .unified-dropdown {
+        display: none;
+        position: absolute;
+        top: 56px;
+        left: 50%;
+        width: 260px;
+        padding: 8px;
+        border: 1px solid #245b88;
+        border-radius: 6px;
+        background: #0b2341;
+        box-shadow: 0 8px 16px rgba(2, 12, 28, .28);
+        opacity: 0;
+        visibility: hidden;
+        transform: translate(-50%, -5px);
+        transition: opacity .18s ease, transform .18s ease, visibility .18s;
+      }
+      .unified-dropdown-section + .unified-dropdown-section { border-top: 1px solid rgba(113, 181, 230, .16); margin-top: 6px; padding-top: 6px; }
+      .unified-dropdown-title { padding: 7px 10px 5px; color: #6fa9d4; font-size: 12px; font-weight: 600; }
+      .unified-dropdown-link {
+        min-height: 36px;
+        padding: 8px 10px;
+        border-radius: 4px;
+        color: #c6def0;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        text-decoration: none;
+        font-size: 13px;
+        transition: background-color .16s ease, color .16s ease;
+      }
+      .unified-dropdown-link:hover, .unified-dropdown-link.active { background: #123c68; color: #fff; }
+      .unified-dropdown-link .fa { width: 14px; text-align: center; color: #4bb8f6; }
+      body.unified-subnav-open { padding-left: 224px !important; }
+      body.unified-subnav-open .page-shell,
+      body.unified-subnav-open .platform-shell,
+      body.unified-subnav-open .workbench-content,
+      body.unified-subnav-open > [style*="margin-left:240px"],
+      body.unified-subnav-open > [style*="margin-left: 240px"],
+      body.unified-subnav-open > div.flex.h-full > aside:first-child + div,
+      body.unified-subnav-open > div.flex.h-screen > aside:first-child + div,
+      body.unified-subnav-open > div.flex > aside:first-child + div,
+      body.unified-subnav-open [class*="ml-[240px]"][class*="w-[calc(100%-240px)]"] {
+        width: 100% !important;
+        max-width: none !important;
+        margin-left: 0 !important;
+      }
+      body.unified-subnav-open .platform-shell,
+      body.unified-subnav-open .workbench-content { flex: 1 1 auto !important; min-width: 0 !important; }
+      .unified-subnav {
+        position: fixed;
+        left: 0;
+        top: var(--unified-topnav-height);
+        bottom: 0;
+        z-index: 900;
+        width: 224px;
+        overflow-y: auto;
+        padding: 14px 10px 22px;
+        background: #0d2346;
+        border-right: 1px solid #183b69;
+        color: #c7d8ef;
+        box-shadow: 3px 0 10px rgba(3, 16, 38, .12);
+      }
+      .unified-subnav::-webkit-scrollbar { width: 5px; }
+      .unified-subnav::-webkit-scrollbar-thumb { background: #31577f; border-radius: 999px; }
+      .unified-subnav-heading {
         display: flex;
         align-items: center;
         gap: 10px;
+        height: 42px;
+        padding: 0 12px 10px;
+        margin-bottom: 6px;
+        border-bottom: 1px solid rgba(142, 188, 225, .16);
+        color: #fff;
+        font-size: 14px;
+        font-weight: 700;
       }
-      .unified-menu-children {
-        margin: 2px 0 8px 26px;
-        padding-left: 8px;
-        border-left: 1px solid rgba(255,255,255,0.12);
-      }
-      .unified-menu-children .unified-menu-item {
-        min-height: 34px;
-        padding: 8px 10px;
-        font-size: 13px;
-        border-radius: 8px;
-      }
-      .unified-menu-children .unified-menu-group { margin-top: 2px; }
-      .unified-menu-children .unified-menu-group-title { min-height: 36px; padding: 8px 10px; font-size: 13px; border-radius: 8px; }
-      .unified-menu-children .unified-menu-children { margin-left: 18px; }
-      .unified-menu-item.placeholder {
-        cursor: default;
-        color: #8fa4cf;
-      }
-      .unified-menu-item.placeholder:hover {
+      .unified-subnav-item,
+      .unified-subnav-group-trigger {
+        width: 100%;
+        min-height: 42px;
+        padding: 9px 12px;
+        border: 0;
+        border-radius: 6px;
         background: transparent;
-        color: #8fa4cf;
-        transform: none;
+        color: #bfd1e9;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-align: left;
+        text-decoration: none;
+        font: 500 14px/1.35 "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+        cursor: pointer;
+        transition: background-color .16s ease, color .16s ease;
       }
-      .unified-menu-footer {
-        padding: 12px 16px;
-        color: #8fa4cf;
-        font-size: 12px;
-        border-top: 1px solid rgba(255,255,255,0.1);
+      .unified-subnav-item:hover,
+      .unified-subnav-group-trigger:hover { background: rgba(59, 139, 211, .16); color: #fff; }
+      .unified-subnav-item.active { background: #15518d; color: #fff; font-weight: 600; }
+      .unified-subnav-item .fa,
+      .unified-subnav-group-trigger .fa:first-child { width: 17px; color: #67bff4; text-align: center; }
+      .unified-subnav-group-trigger .fa-angle-down { margin-left: auto; width: auto; color: #7899ba; transition: transform .16s ease; }
+      .unified-subnav-group.expanded .unified-subnav-group-trigger { color: #fff; background: rgba(59, 139, 211, .11); }
+      .unified-subnav-group.expanded .fa-angle-down { transform: rotate(180deg); }
+      .unified-subnav-children { display: none; padding: 4px 0 6px 28px; }
+      .unified-subnav-group.expanded .unified-subnav-children { display: block; }
+      .unified-subnav-children .unified-subnav-item { min-height: 34px; padding: 7px 10px; font-size: 13px; }
+      @media (max-width: 1280px) {
+        .unified-nav-side { padding-inline: 8px; gap: 0; }
+        .unified-nav-trigger { min-width: 118px; padding-inline: 10px; font-size: 14px; }
+        .unified-brand { min-width: 360px; width: 360px; padding-inline: 40px; }
+        .unified-brand-name { font-size: 17px; letter-spacing: .03em; }
       }
-      .unified-content-shift {
-        margin-left: ${SIDEBAR_WIDTH}px !important;
-        width: calc(100% - ${SIDEBAR_WIDTH}px) !important;
-      }
-      @media (max-width: 900px) {
-        .unified-sidebar { transform: translateX(-${SIDEBAR_WIDTH}px); }
-        .unified-content-shift { margin-left: 0 !important; width: 100% !important; }
+      @media (prefers-reduced-motion: reduce) {
+        .unified-topnav * { transition-duration: .01ms !important; }
       }
     `;
     document.head.appendChild(style);
   };
 
-  const createLogo = () => {
-    const logo = document.createElement('div');
-    logo.className = 'unified-sidebar-logo';
-    logo.innerHTML = `
-      <div class="unified-logo-mark"><i class="fa fa-cube"></i></div>
-      <div>
-        <div style="font-size:13px;font-weight:700;color:#fff;line-height:1.35;">视频AI识别自进化能力平台</div>
-        <div style="font-size:12px;color:#8fa4cf;margin-top:3px;">智慧管控系统</div>
-      </div>
-    `;
-    return logo;
-  };
-
-  const createItem = ({ title, icon, href }) => {
-    const item = document.createElement(href ? 'a' : 'div');
-    if (href) item.href = href;
-    item.className = `unified-menu-item${href && isSamePage(href) ? ' active' : ''}${href ? '' : ' placeholder'}`;
-    item.innerHTML = `${icon ? `<i class="fa ${icon}" style="width:18px;text-align:center;"></i>` : '<span style="width:7px;height:7px;border-radius:999px;background:currentColor;opacity:.65;"></span>'}<span>${title}</span>`;
-    return item;
-  };
-
-  const menuStateKey = path => `unified-menu:${path}`;
-  const readMenuState = path => {
-    try { return sessionStorage.getItem(menuStateKey(path)); } catch (_) { return null; }
-  };
-  const writeMenuState = (path, collapsed) => {
-    try { sessionStorage.setItem(menuStateKey(path), collapsed ? 'collapsed' : 'expanded'); } catch (_) {}
-  };
-
-  const createGroup = (group, depth = 0, path = group.title) => {
-    const wrapper = document.createElement('div');
-    const savedState = readMenuState(path);
-    const initiallyCollapsed = savedState ? savedState === 'collapsed' : depth === 0;
-    wrapper.className = `unified-menu-group${initiallyCollapsed ? ' collapsed' : ''}`;
-
-    const title = document.createElement('div');
-    title.className = `unified-menu-group-title${activeGroup(group) ? ' active' : ''}`;
-    title.innerHTML = `
-      <span class="unified-group-main"><i class="fa ${group.icon}" style="width:18px;text-align:center;"></i><span>${group.title}</span></span>
-      ${group.children.length ? '<i class="fa fa-angle-down"></i>' : '<span aria-hidden="true"></span>'}
-    `;
-
-    const children = document.createElement('div');
-    children.className = `unified-menu-children${group.children.length ? '' : ' empty'}`;
-    group.children.forEach(child => children.appendChild(child.children ? createGroup(child, depth + 1, `${path}/${child.title}`) : createItem(child)));
-
-    title.addEventListener('click', () => {
-      if (!group.children.length) return;
-      wrapper.classList.toggle('collapsed');
-      writeMenuState(path, wrapper.classList.contains('collapsed'));
+  const renderSubnav = group => {
+    let subnav = document.querySelector('.unified-subnav');
+    if (!subnav) {
+      subnav = document.createElement('aside');
+      subnav.className = 'unified-subnav';
+      subnav.dataset.keepSidebar = 'true';
+      subnav.setAttribute('aria-label', '页面左侧导航');
+      document.body.appendChild(subnav);
+    }
+    document.body.classList.add('unified-subnav-open');
+    subnav.innerHTML = `<div class="unified-subnav-heading"><i class="fa ${group.icon}" aria-hidden="true"></i><span>${group.title}</span></div>`;
+    group.children.forEach(item => {
+      if (!item.children) {
+        const link = document.createElement(item.href ? 'a' : 'div');
+        if (item.href) link.href = item.href;
+        link.className = `unified-subnav-item${item.href && isSamePage(item.href) ? ' active' : ''}`;
+        link.innerHTML = `<i class="fa ${item.icon || 'fa-angle-right'}" aria-hidden="true"></i><span>${item.title}</span>`;
+        subnav.appendChild(link);
+        return;
+      }
+      const itemIsActive = activeGroup(item);
+      const section = document.createElement('div');
+      section.className = `unified-subnav-group${itemIsActive ? ' expanded' : ''}`;
+      const trigger = document.createElement('button');
+      trigger.type = 'button';
+      trigger.className = 'unified-subnav-group-trigger';
+      trigger.setAttribute('aria-expanded', String(itemIsActive));
+      trigger.innerHTML = `<i class="fa ${item.icon || 'fa-folder-o'}" aria-hidden="true"></i><span>${item.title}</span><i class="fa fa-angle-down" aria-hidden="true"></i>`;
+      const children = document.createElement('div');
+      children.className = 'unified-subnav-children';
+      item.children.forEach(child => {
+        const link = document.createElement(child.href ? 'a' : 'div');
+        if (child.href) link.href = child.href;
+        link.className = `unified-subnav-item${child.href && isSamePage(child.href) ? ' active' : ''}`;
+        link.innerHTML = `<i class="fa fa-angle-right" aria-hidden="true"></i><span>${child.title}</span>`;
+        children.appendChild(link);
+      });
+      trigger.addEventListener('click', () => {
+        const expanded = section.classList.toggle('expanded');
+        trigger.setAttribute('aria-expanded', String(expanded));
+      });
+      section.append(trigger, children);
+      subnav.appendChild(section);
     });
-
-    wrapper.append(title, children);
-    return wrapper;
+    try { sessionStorage.setItem('unified-active-center', group.title); } catch (_) {}
   };
 
-  const shiftContent = aside => {
-    const parent = aside.parentElement;
-    const target = aside.nextElementSibling || (parent !== document.body ? parent : null);
-    if (target) target.classList.add('unified-content-shift');
+  const createGroup = group => {
+    const wrapper = document.createElement('div');
+    wrapper.className = `unified-nav-group${activeGroup(group) ? ' active' : ''}`;
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'unified-nav-trigger';
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.innerHTML = `<i class="fa ${group.icon}" aria-hidden="true"></i><span>${group.title}</span>`;
+    const dropdown = document.createElement('div');
+    dropdown.className = 'unified-dropdown';
+    group.children.forEach(section => {
+      const sectionEl = document.createElement('div');
+      sectionEl.className = 'unified-dropdown-section';
+      const items = section.children || [section];
+      if (section.children) sectionEl.innerHTML = `<div class="unified-dropdown-title">${section.title}</div>`;
+      items.forEach(item => {
+        const link = document.createElement(item.href ? 'a' : 'div');
+        if (item.href) link.href = item.href;
+        link.className = `unified-dropdown-link${item.href && isSamePage(item.href) ? ' active' : ''}`;
+        link.innerHTML = `<i class="fa ${item.icon || 'fa-angle-right'}" aria-hidden="true"></i><span>${item.title}</span>`;
+        sectionEl.appendChild(link);
+      });
+      dropdown.appendChild(sectionEl);
+    });
+    trigger.addEventListener('click', () => {
+      document.querySelectorAll('.unified-nav-group.open').forEach(item => item.classList.remove('open'));
+      trigger.setAttribute('aria-expanded', 'false');
+      renderSubnav(group);
+      const landingPage = firstGroupHref(group);
+      if (landingPage) go(landingPage);
+    });
+    wrapper.append(trigger, dropdown);
+    return wrapper;
   };
 
   const renderMenu = () => {
     injectStyle();
-    let aside = document.querySelector('aside[data-unified-menu-host]') || document.querySelector('aside');
-    if (!aside) {
-      aside = document.createElement('aside');
-      document.body.insertBefore(aside, document.body.firstChild);
+    if (document.querySelector('.unified-topnav')) return;
+    document.body.classList.add('unified-topnav-page');
+    const header = document.createElement('header');
+    header.className = 'unified-topnav';
+    header.setAttribute('aria-label', '平台总导航');
+    const left = document.createElement('nav');
+    left.className = 'unified-nav-side unified-nav-side--left';
+    left.setAttribute('aria-label', '左侧中心导航');
+    const right = document.createElement('nav');
+    right.className = 'unified-nav-side unified-nav-side--right';
+    right.setAttribute('aria-label', '右侧中心导航');
+    menuGroups.slice(0, 2).forEach(group => left.appendChild(createGroup(group)));
+    menuGroups.slice(2).forEach(group => right.appendChild(createGroup(group)));
+    const brand = document.createElement('a');
+    brand.className = 'unified-brand';
+    brand.href = '首页.html';
+    brand.setAttribute('aria-label', '返回平台首页');
+    brand.innerHTML = '<span class="unified-brand-mark">AI</span><span class="unified-brand-name">视频AI识别自进化能力平台</span>';
+    header.append(left, brand, right);
+    document.body.insertBefore(header, document.body.firstChild);
+    const requestedCenter = new URLSearchParams(location.search).get('center');
+    let initialGroup = menuGroups.find(group => group.center === requestedCenter) || menuGroups.find(group => activeGroup(group));
+    if (!initialGroup) {
+      try {
+        const savedTitle = sessionStorage.getItem('unified-active-center');
+        initialGroup = menuGroups.find(group => group.title === savedTitle);
+      } catch (_) {}
     }
-    if (!aside || aside.dataset.unifiedMenu === 'true') return;
-
-    aside.dataset.unifiedMenu = 'true';
-    aside.className = 'unified-sidebar';
-    aside.innerHTML = '';
-
-    const nav = document.createElement('nav');
-    nav.className = 'unified-menu';
-    menuGroups.forEach(group => {
-      nav.appendChild(group.children ? createGroup(group, 0, group.title) : createItem(group));
+    if (initialGroup) renderSubnav(initialGroup);
+    document.addEventListener('click', event => {
+      document.querySelectorAll('.unified-nav-group.open').forEach(group => {
+        if (!group.contains(event.target)) {
+          group.classList.remove('open');
+          group.querySelector('.unified-nav-trigger')?.setAttribute('aria-expanded', 'false');
+        }
+      });
     });
-
-    const footer = document.createElement('div');
-    footer.className = 'unified-menu-footer';
-    footer.innerHTML = '<i class="fa fa-location-arrow"></i> 菜单已统一固定，点击可跳转页面';
-
-    aside.append(createLogo(), nav, footer);
-    shiftContent(aside);
   };
 
   const bindElement = (element, href) => {

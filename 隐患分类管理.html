@@ -31,5 +31,5 @@
     function bind(){document.querySelectorAll('.switch').forEach(x=>x.onclick=()=>x.classList.toggle('off'));document.querySelectorAll('.delete').forEach(x=>x.onclick=()=>x.closest('.category-row').remove());document.querySelectorAll('.edit').forEach(x=>x.onclick=()=>openModal('编辑隐患分类',null,x.closest('.category-row')));document.querySelectorAll('.add-child').forEach((x,i)=>x.onclick=()=>openModal('新增二级分类',i))}
     document.getElementById('addRoot').onclick=()=>openModal('新增隐患分类');document.querySelectorAll('[data-close]').forEach(x=>x.onclick=close);document.getElementById('form').onsubmit=e=>{e.preventDefault();const n=document.getElementById('name').value.trim();if(editTarget){editTarget.querySelector('span:last-child').textContent=n;editTarget.dataset.name=n}else if(parentIndex!==null){data[parentIndex].children.push(n);render()}else{data.push({name:n,desc:document.getElementById('desc').value||'暂无描述',children:[]});render()}close()};document.getElementById('search').oninput=e=>{const q=e.target.value.trim();document.querySelectorAll('.category-row').forEach(x=>x.classList.toggle('hidden',q&&!x.dataset.name.includes(q)))};render();
   </script>
-  <script src="navigation.js?v=20260819-2"></script>
+  <script src="navigation.js?v=20260903-6"></script>
 </body></html>
