@@ -236,6 +236,7 @@
       .unified-brand-name {
         font-size: clamp(17px, 1.4vw, 23px);
         font-weight: 700;
+        font-family: "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
         letter-spacing: .08em;
         white-space: nowrap;
       }
@@ -247,13 +248,17 @@
         padding: 0 22px;
         border: 1px solid rgba(73, 128, 190, .2);
         border-radius: 0;
-        background: linear-gradient(180deg, rgba(24, 54, 91, .72), rgba(10, 31, 61, .82));
-        color: #b8cde2;
+        background: linear-gradient(180deg, rgba(20, 43, 72, .82), rgba(8, 25, 48, .92));
+        color: #c3cfdd;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         gap: 0;
-        font: 500 14px/1 "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+        font-family: "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1;
+        letter-spacing: .04em;
         cursor: pointer;
         box-shadow: inset 0 -1px 0 rgba(55, 128, 201, .2);
         clip-path: polygon(12% 0, 100% 0, 88% 100%, 0 100%);
@@ -262,18 +267,18 @@
       .unified-nav-trigger > .fa { display: none; }
       .unified-nav-trigger:hover,
       .unified-nav-trigger:focus-visible {
-        color: #fff;
-        background: linear-gradient(135deg, rgba(35, 104, 208, .72), rgba(93, 49, 190, .58));
-        border-color: rgba(104, 162, 232, .38);
+        color: #f3f7fb;
+        background: linear-gradient(135deg, rgba(24, 72, 126, .88), rgba(47, 43, 103, .84));
+        border-color: rgba(101, 148, 199, .42);
         outline: none;
       }
       .unified-nav-trigger:focus-visible { box-shadow: inset 0 0 0 2px rgba(130, 184, 255, .5); }
       .unified-nav-group.active > .unified-nav-trigger {
-        color: #fff;
-        font-weight: 600;
-        background: linear-gradient(135deg, #176de0 0%, #5b35c8 100%);
-        border-color: rgba(109, 174, 255, .58);
-        box-shadow: inset 0 -3px 0 #35c8ff, 0 3px 8px rgba(15, 59, 146, .24);
+        color: #f7f9fc;
+        font-weight: 700;
+        background: linear-gradient(135deg, #174b80 0%, #39306f 100%);
+        border-color: rgba(102, 151, 204, .5);
+        box-shadow: inset 0 -3px 0 #4aa6d8, 0 3px 8px rgba(2, 16, 38, .3);
       }
       .unified-dropdown {
         display: none;
