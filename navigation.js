@@ -105,16 +105,6 @@
       ]
     },
     {
-      title: '视频汇聚中心',
-      icon: 'fa-video-camera',
-      center: 'video',
-      href: '视频汇聚中心.html?center=video',
-      children: [
-        { title: '视频汇聚总览', icon: 'fa-th-large', href: '视频汇聚中心.html' },
-        { title: '视频资源管理', icon: 'fa-camera' }
-      ]
-    },
-    {
       title: '系统管理',
       icon: 'fa-cogs',
       center: 'system',
@@ -193,31 +183,33 @@
         color: #dceeff !important;
         display: flex !important;
         align-items: stretch !important;
+        justify-content: flex-start !important;
         border-bottom: 1px solid #194a7c;
         box-shadow: 0 3px 10px rgba(3, 15, 35, .22) !important;
       }
       .unified-topnav, .unified-topnav * { box-sizing: border-box; }
       .unified-nav-side {
-        flex: 1 1 0;
+        flex: 0 0 auto;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
         min-width: 0;
-        padding: 0 22px;
+        padding: 0;
       }
-      .unified-nav-side--left { justify-content: flex-end; }
-      .unified-nav-side--right { justify-content: flex-start; }
+      .unified-nav-side--left { order: 1; justify-content: flex-start; }
+      .unified-nav-side--right { order: 2; justify-content: flex-start; margin-left: 10px; }
       .unified-brand {
+        order: 0;
         position: relative;
         isolation: isolate;
-        width: clamp(390px, 32vw, 560px);
-        min-width: 390px;
-        height: 56px;
-        margin-top: 5px;
-        padding: 0 54px;
+        width: clamp(410px, 34vw, 560px);
+        min-width: 410px;
+        height: 68px;
+        margin: 0 18px 0 0;
+        padding: 0 52px 0 30px;
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         gap: 14px;
         color: #eaf7ff;
         text-decoration: none;
@@ -230,21 +222,16 @@
         z-index: -1;
         background: linear-gradient(180deg, #0c315c 0%, #082341 100%);
         border: 1px solid #2aa8f0;
-        clip-path: polygon(7% 0, 93% 0, 86% 100%, 14% 100%);
+        clip-path: polygon(0 0, 100% 0, 88% 100%, 0 100%);
         box-shadow: inset 0 0 18px rgba(39, 165, 239, .28);
       }
       .unified-brand-mark {
         width: 34px;
         height: 34px;
-        border: 1px solid #55c4ff;
-        color: #7ed7ff;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 800;
-        font-size: 12px;
-        box-shadow: inset 0 0 9px rgba(65, 190, 255, .35);
+        flex: 0 0 34px;
+        display: block;
+        object-fit: contain;
+        filter: drop-shadow(0 0 7px rgba(55, 137, 255, .32));
       }
       .unified-brand-name {
         font-size: clamp(17px, 1.4vw, 23px);
@@ -254,37 +241,40 @@
       }
       .unified-nav-group { position: relative; height: 100%; display: flex; align-items: center; }
       .unified-nav-trigger {
-        height: 42px;
-        min-width: 132px;
-        padding: 0 18px;
-        border: 0;
-        background: transparent;
-        color: #94c9ee;
+        height: 38px;
+        width: 146px;
+        min-width: 146px;
+        padding: 0 22px;
+        border: 1px solid rgba(73, 128, 190, .2);
+        border-radius: 0;
+        background: linear-gradient(180deg, rgba(24, 54, 91, .72), rgba(10, 31, 61, .82));
+        color: #b8cde2;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 9px;
-        font: 600 15px/1 "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+        gap: 0;
+        font: 500 14px/1 "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
         cursor: pointer;
-        transition: color .18s ease, background-color .18s ease;
+        box-shadow: inset 0 -1px 0 rgba(55, 128, 201, .2);
+        clip-path: polygon(12% 0, 100% 0, 88% 100%, 0 100%);
+        transition: color .18s ease, background-color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease;
       }
-      .unified-nav-trigger::after {
-        content: '';
-        width: 1px;
-        height: 20px;
-        margin-left: 12px;
-        background: #2771aa;
-        transform: skew(-25deg);
-      }
-      .unified-nav-group:last-child .unified-nav-trigger::after { display: none; }
+      .unified-nav-trigger > .fa { display: none; }
       .unified-nav-trigger:hover,
-      .unified-nav-trigger:focus-visible,
-      .unified-nav-group.active > .unified-nav-trigger {
+      .unified-nav-trigger:focus-visible {
         color: #fff;
-        background: rgba(30, 137, 214, .18);
+        background: linear-gradient(135deg, rgba(35, 104, 208, .72), rgba(93, 49, 190, .58));
+        border-color: rgba(104, 162, 232, .38);
         outline: none;
       }
-      .unified-nav-group.active > .unified-nav-trigger { box-shadow: inset 0 -3px 0 #27aaf5; }
+      .unified-nav-trigger:focus-visible { box-shadow: inset 0 0 0 2px rgba(130, 184, 255, .5); }
+      .unified-nav-group.active > .unified-nav-trigger {
+        color: #fff;
+        font-weight: 600;
+        background: linear-gradient(135deg, #176de0 0%, #5b35c8 100%);
+        border-color: rgba(109, 174, 255, .58);
+        box-shadow: inset 0 -3px 0 #35c8ff, 0 3px 8px rgba(15, 59, 146, .24);
+      }
       .unified-dropdown {
         display: none;
         position: absolute;
@@ -391,9 +381,10 @@
       .unified-subnav-group.expanded .unified-subnav-children { display: block; }
       .unified-subnav-children .unified-subnav-item { min-height: 34px; padding: 7px 10px; font-size: 13px; }
       @media (max-width: 1280px) {
-        .unified-nav-side { padding-inline: 8px; gap: 0; }
-        .unified-nav-trigger { min-width: 118px; padding-inline: 10px; font-size: 14px; }
-        .unified-brand { min-width: 360px; width: 360px; padding-inline: 40px; }
+        .unified-nav-side { padding-inline: 0; gap: 8px; }
+        .unified-nav-side--right { margin-left: 8px; }
+        .unified-nav-trigger { width: 132px; min-width: 132px; padding-inline: 16px; font-size: 14px; }
+        .unified-brand { min-width: 360px; width: 360px; margin-right: 8px; padding: 0 36px 0 20px; }
         .unified-brand-name { font-size: 17px; letter-spacing: .03em; }
       }
       @media (prefers-reduced-motion: reduce) {
@@ -504,7 +495,7 @@
     brand.className = 'unified-brand';
     brand.href = '首页.html';
     brand.setAttribute('aria-label', '返回平台首页');
-    brand.innerHTML = '<span class="unified-brand-mark">AI</span><span class="unified-brand-name">视频AI识别自进化能力平台</span>';
+    brand.innerHTML = '<img class="unified-brand-mark" src="assets/branding/platform-logo.png" alt=""><span class="unified-brand-name">视频AI识别自进化能力平台</span>';
     header.append(left, brand, right);
     document.body.insertBefore(header, document.body.firstChild);
     const requestedCenter = new URLSearchParams(location.search).get('center');
