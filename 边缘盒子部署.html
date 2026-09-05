@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>边缘盒子部署 - 视频AI识别自进化能力平台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --ink: #1e293b;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --bg: #f4f7fb;
+      --success: #059669;
+      --warn: #d97706;
+      --danger: #dc2626
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      font-family: "Microsoft YaHei UI", "Microsoft YaHei", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink)
+    }
+
+    button,
+    input,
+    select {
+      font: inherit
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 2px solid #60a5fa;
+      outline-offset: 2px
+    }
+
+    .page {
+      min-height: 100vh;
+      margin-left: 240px
+    }
+
+    .page-head {
+      height: 64px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px
+    }
+
+    .crumb {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 3px
+    }
+
+    .page-title {
+      font-size: 19px;
+      font-weight: 700
+    }
+
+    .head-note {
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    .page-head-main{display:flex;align-items:center;gap:12px}.page-back{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px;border:1px solid #d8e1ec;border-radius:7px;background:#fff;color:#3d5878;text-decoration:none;font-size:12px;transition:border-color .16s ease,color .16s ease,background .16s ease}.page-back:hover{border-color:#8ab3ee;background:#f4f8ff;color:#1565d8}.page-back:focus-visible{outline:2px solid #60a5fa;outline-offset:2px}
+
+    .content {
+      padding: 20px 24px 34px
+    }
+
+    .overview {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      display: grid;
+      grid-template-columns: 1.3fr repeat(4, 1fr);
+      min-height: 104px;
+      overflow: hidden
+    }
+
+    .overview-intro {
+      padding: 20px;
+      border-right: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      gap: 15px
+    }
+
+    .overview-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 11px;
+      background: #eaf2ff;
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      font-size: 21px
+    }
+
+    .overview-intro h2 {
+      font-size: 16px;
+      margin: 0 0 6px
+    }
+
+    .overview-intro p {
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--muted);
+      margin: 0
+    }
+
+    .metric {
+      padding: 19px 20px;
+      border-right: 1px solid var(--line)
+    }
+
+    .metric:last-child {
+      border-right: 0
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    .metric-value {
+      font-size: 26px;
+      font-weight: 700;
+      margin: 7px 0 4px;
+      font-variant-numeric: tabular-nums
+    }
+
+    .metric-sub {
+      font-size: 11px;
+      color: #94a3b8
+    }
+
+    .metric-value.warn {
+      color: var(--warn)
+    }
+
+    .metric-value.danger {
+      color: var(--danger)
+    }
+
+    .section {
+      margin-top: 16px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px
+    }
+
+    .section-head {
+      padding: 15px 18px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between
+    }
+
+    .section-head h2 {
+      font-size: 15px;
+      margin: 0
+    }
+
+    .section-head p {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 4px 0 0
+    }
+
+    .factory-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0
+    }
+
+    .factory {
+      padding: 16px 18px;
+      border-right: 1px solid var(--line);
+      cursor: pointer;
+      transition: background .18s ease
+    }
+
+    .factory:last-child {
+      border-right: 0
+    }
+
+    .factory:hover,
+    .factory.active {
+      background: #f7faff
+    }
+
+    .factory.active {
+      box-shadow: inset 0 -3px 0 var(--primary)
+    }
+
+    .factory-name {
+      font-size: 14px;
+      font-weight: 650
+    }
+
+    .factory-meta {
+      display: flex;
+      gap: 18px;
+      margin-top: 13px
+    }
+
+    .factory-meta span {
+      font-size: 11px;
+      color: var(--muted)
+    }
+
+    .factory-meta b {
+      display: block;
+      font-size: 18px;
+      color: var(--ink);
+      margin-top: 2px
+    }
+
+    .factory-meta b.alert {
+      color: var(--warn)
+    }
+
+    .toolbar {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .control {
+      height: 34px;
+      border: 1px solid #d6e0ec;
+      border-radius: 7px;
+      background: #fff;
+      padding: 0 11px;
+      color: #475569;
+      font-size: 12px
+    }
+
+    .search {
+      width: 220px
+    }
+
+    .toolbar-spacer {
+      flex: 1
+    }
+
+    .btn {
+      height: 34px;
+      border: 1px solid #cbd5e1;
+      border-radius: 7px;
+      background: #fff;
+      padding: 0 13px;
+      color: #475569;
+      font-size: 12px;
+      cursor: pointer
+    }
+
+    .btn:hover {
+      border-color: #93c5fd;
+      color: var(--primary)
+    }
+
+    .btn.primary {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary)
+    }
+
+    .btn.primary:hover {
+      background: #1d4ed8;
+      color: #fff
+    }
+
+    .btn:disabled {
+      opacity: .45;
+      cursor: not-allowed
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px
+    }
+
+    th {
+      height: 42px;
+      background: #f8fafc;
+      color: #64748b;
+      font-weight: 600;
+      text-align: left;
+      padding: 0 12px;
+      white-space: nowrap
+    }
+
+    td {
+      height: 52px;
+      padding: 0 12px;
+      border-top: 1px solid #edf1f6;
+      color: #334155;
+      vertical-align: middle
+    }
+
+    tbody tr.box-row:hover {
+      background: #fbfdff
+    }
+
+    .check {
+      width: 15px;
+      height: 15px
+    }
+
+    .expander {
+      width: 24px;
+      height: 24px;
+      border: 1px solid #dbeafe;
+      background: #eff6ff;
+      color: #2563eb;
+      border-radius: 6px;
+      cursor: pointer
+    }
+
+    .expander i {
+      transition: transform .18s
+    }
+
+    .expander.open i {
+      transform: rotate(90deg)
+    }
+
+    .box-name {
+      font-weight: 650;
+      color: #1e293b
+    }
+
+    .subline {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 3px
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 11px;
+      white-space: nowrap
+    }
+
+    .tag.ok {
+      background: #e8f8f1;
+      color: #047857
+    }
+
+    .tag.warn {
+      background: #fff4df;
+      color: #b45309
+    }
+
+    .tag.danger {
+      background: #feecec;
+      color: #b91c1c
+    }
+
+    .tag.info{background:#e9f2ff;color:#1d4ed8}.tag.purple{background:#f2eafe;color:#7c3aed}.tag.muted{background:#eef2f6;color:#526174}.tag .fa-spinner{margin-right:4px}.muted-action{display:inline-block;min-width:48px;text-align:center;color:#a5afbd}.status-time{margin-top:4px;color:#64748b;font-size:10px;white-space:nowrap}.schedule-help{display:block;margin-top:5px;color:#718096;font-size:10px}
+
+    .tag.neutral {
+      background: #eef2f7;
+      color: #64748b
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      margin-right: 5px;
+      background: currentColor
+    }
+
+    .version {
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-weight: 600;
+      color: #334155
+    }
+
+    .algo-summary {
+      display: flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .algo-count {
+      font-weight: 700
+    }
+
+    .mini-tags {
+      display: flex;
+      gap: 4px;
+      margin-top: 4px
+    }
+
+    .mini-tags span {
+      font-size: 10px;
+      background: #f1f5f9;
+      color: #64748b;
+      padding: 2px 5px;
+      border-radius: 4px
+    }
+
+    .link {
+      border: 0;
+      background: none;
+      color: var(--primary);
+      cursor: pointer;
+      padding: 4px 5px;
+      font-size: 12px
+    }
+
+    .link:hover {
+      text-decoration: underline;
+      text-underline-offset: 3px
+    }
+
+    .detail-row {
+      display: none
+    }
+
+    .detail-row.open {
+      display: table-row
+    }
+
+    .detail-cell {
+      padding: 0 !important;
+      background: #f8fbff
+    }
+
+    .algo-panel {
+      padding: 16px 52px 19px
+    }
+
+    .algo-panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px
+    }
+
+    .algo-panel-head strong {
+      font-size: 13px
+    }
+
+    .legend {
+      font-size: 11px;
+      color: var(--muted)
+    }
+
+    .algo-table {
+      border: 1px solid #e3eaf3;
+      border-radius: 9px;
+      overflow: hidden;
+      background: #fff
+    }
+
+    .algo-table td {
+      height: 41px
+    }
+
+    .algo-table th {
+      height: 36px
+    }
+
+    .upgrade-text {
+      color: var(--warn);
+      font-weight: 600
+    }
+
+    .latest-text {
+      color: var(--success);
+      font-weight: 600
+    }
+
+    .empty {
+      display: none;
+      text-align: center;
+      padding: 48px;
+      color: #94a3b8
+    }
+
+    .empty i {
+      font-size: 28px;
+      margin-bottom: 10px
+    }
+
+    .pagination {
+      padding: 12px 16px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      color: #64748b;
+      font-size: 12px
+    }
+
+    .drawer-mask {
+      position: fixed;
+      inset: 68px 0 0;
+      background: rgba(15, 23, 42, .42);
+      z-index: 1200;
+      display: none
+    }
+
+    .drawer-mask.open {
+      display: block
+    }
+
+    .drawer {
+      position: fixed;
+      right: 0;
+      top: 68px;
+      width: min(620px, 94vw);
+      height: calc(100vh - 68px);
+      background: #fff;
+      z-index: 1201;
+      transform: translateX(102%);
+      transition: transform .22s ease-out;
+      overflow: auto
+    }
+
+    .drawer.open {
+      transform: none
+    }
+
+    .drawer.batch-mode { width: min(780px, 96vw); overflow-y:auto; overflow-x:hidden }
+    .drawer.batch-mode .algorithm-select-list{max-height:none;overflow:visible}
+    .drawer.batch-mode .drawer-actions{position:static}
+    .algorithm-scope{padding:16px;border:1px solid #d8e3f1;border-radius:12px;background:#f7faff;margin-bottom:14px}.algorithm-scope-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:14px}.algorithm-scope-heading{display:flex;align-items:center;gap:10px}.algorithm-scope-icon{display:grid;place-items:center;width:32px;height:32px;border-radius:9px;background:#e8f1ff;color:#2563eb;font-size:13px}.algorithm-scope-title{color:#172b4d;font-size:13px;font-weight:700}.algorithm-scope-count{display:block;margin-top:2px;color:#718096;font-size:11px;font-weight:400}.algorithm-select-all{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid #cedbeb;border-radius:8px;background:#fff;color:#334155;font-size:12px;font-weight:600;cursor:pointer;transition:border-color .16s ease,background .16s ease}.algorithm-select-all:hover{border-color:#7aaaf7;background:#f4f8ff}.algorithm-scope-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.algorithm-scope-item{position:relative;display:grid;grid-template-columns:20px minmax(0,1fr) auto;align-items:center;gap:9px;min-height:46px;padding:9px 11px;border:1px solid #dce5f0;border-radius:10px;background:#fff;color:#263a59;font-size:12px;cursor:pointer;transition:border-color .16s ease,background .16s ease,box-shadow .16s ease,transform .16s ease}.algorithm-scope-item:hover{border-color:#8eb7f5;box-shadow:0 5px 14px rgba(37,99,235,.08);transform:translateY(-1px)}.algorithm-scope-item:has(input:checked){border-color:#9bbdf3;background:#f0f6ff;box-shadow:inset 0 0 0 1px rgba(37,99,235,.08)}.algorithm-scope-item span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}.algorithm-scope-item small{padding:3px 7px;border-radius:999px;background:#e6effd;color:#4772ad;font-size:10px;white-space:nowrap}.field .algorithm-scope input[type="checkbox"],.algorithm-scope input[type="checkbox"]{appearance:none;-webkit-appearance:none;width:18px;height:18px;margin:0;padding:0;border:1.5px solid #afbdd0;border-radius:5px;background:#fff;display:grid;place-items:center;cursor:pointer;transition:background .15s ease,border-color .15s ease,box-shadow .15s ease}.field .algorithm-scope input[type="checkbox"]::after,.algorithm-scope input[type="checkbox"]::after{content:"";width:8px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) scale(0);margin-top:-2px;transition:transform .12s ease}.field .algorithm-scope input[type="checkbox"]:checked,.algorithm-scope input[type="checkbox"]:checked{border-color:#2563eb;background:#2563eb}.field .algorithm-scope input[type="checkbox"]:checked::after,.algorithm-scope input[type="checkbox"]:checked::after{transform:rotate(-45deg) scale(1)}.field .algorithm-scope input[type="checkbox"]:indeterminate,.algorithm-scope input[type="checkbox"]:indeterminate{border-color:#2563eb;background:#2563eb}.field .algorithm-scope input[type="checkbox"]:indeterminate::after,.algorithm-scope input[type="checkbox"]:indeterminate::after{width:8px;height:0;border-left:0;border-bottom:2px solid #fff;transform:none;margin:0}.field .algorithm-scope input[type="checkbox"]:focus-visible,.algorithm-scope input[type="checkbox"]:focus-visible{outline:0;box-shadow:0 0 0 3px rgba(37,99,235,.18)}.algorithm-scope-item:has(input:not(:checked)){color:#8795a8;background:#fff;border-color:#e5eaf1;box-shadow:none}.algorithm-scope-item:has(input:not(:checked)) small{background:#f1f4f8;color:#94a3b8}.batch-version-title{font-size:12px;font-weight:600;color:#172b4d;margin:16px 0 8px}.batch-box.filtered-out{display:none}@media(max-width:720px){.algorithm-scope-grid{grid-template-columns:1fr 1fr}}@media(max-width:520px){.algorithm-scope-grid{grid-template-columns:1fr}.algorithm-scope-head{align-items:flex-start;flex-direction:column}.algorithm-select-all{width:100%;justify-content:center}}
+
+    .algorithm-scope-item{grid-template-columns:22px minmax(0,1fr);gap:14px;min-height:60px;padding:10px 14px}
+    .algorithm-scope-copy{display:flex;flex-direction:column;align-items:flex-start;min-width:0;gap:4px}
+    .algorithm-scope-item .algorithm-scope-name{width:100%;font-size:12px;line-height:1.3;color:#263a59}
+    .algorithm-scope-item .algorithm-scope-boxes{padding:0;border-radius:0;background:transparent;color:#718096;font-size:10px;line-height:1.2}
+    .algorithm-scope-item:has(input:not(:checked)) .algorithm-scope-boxes{background:transparent;color:#94a3b8}
+    .field .algorithm-scope-item input[type="checkbox"],.algorithm-scope-item input[type="checkbox"]{width:20px;height:20px}
+    .version-auto-note{margin:0 0 10px}
+    .deploy-steps{display:flex;align-items:center;gap:8px;margin:0 20px;padding:14px 0 0}.deploy-step{display:flex;align-items:center;gap:7px;color:#94a3b8;font-size:12px}.deploy-step b{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#e8eef6;color:#64748b}.deploy-step.active{color:#2563eb;font-weight:600}.deploy-step.active b{background:#2563eb;color:#fff}.deploy-step-line{width:42px;height:1px;background:#d9e2ee}.batch-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}.batch-summary-item{padding:11px;border:1px solid #dfe6ef;border-radius:7px;background:#f8fafc}.batch-summary-item span{display:block;color:#64748b;font-size:11px}.batch-summary-item b{display:block;margin-top:4px;color:#172b4d;font-size:18px}.batch-summary-item.warn b{color:#dc7a00}.scope-row,.batch-box-head{display:grid;grid-template-columns:28px minmax(180px,1fr) 105px 110px;align-items:center;gap:10px;padding:10px 11px;border-bottom:1px solid #edf1f5;font-size:12px}.scope-list,.batch-config-list{border:1px solid #dfe6ef;border-radius:7px;overflow:hidden}.scope-row:last-child{border-bottom:0}.scope-row.unavailable{color:#94a3b8;background:#f8fafc}.scope-status{justify-self:end}.batch-toolbar{display:flex;align-items:end;gap:8px;padding:10px;border:1px solid #dfe6ef;border-radius:7px;background:#f8fafc;margin-bottom:10px}.batch-toolbar .field{flex:1}.batch-box{border:1px solid #dfe6ef;border-radius:7px;margin-bottom:8px;overflow:hidden}.batch-box-head{grid-template-columns:28px minmax(220px,1fr) 110px 24px;background:#f8fafc;cursor:pointer}.batch-box-head .box-meta{color:#64748b;font-size:11px;margin-top:2px}.batch-box-body{display:none}.batch-box.open .batch-box-body{display:block}.batch-box.open .batch-chevron{transform:rotate(180deg)}.batch-box .algorithm-config-row{grid-template-columns:34px minmax(120px,1.3fr) minmax(100px,.8fr) minmax(190px,1.2fr)}.compat-ok{color:#059669}.compat-warn{color:#dc7a00}.deploy-confirm{padding:10px 12px;border-radius:7px;background:#eff6ff;color:#1d4ed8;font-size:12px;margin-top:10px}
+
+    .drawer-head {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      padding: 18px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 2
+    }
+
+    .drawer-title {
+      font-weight: 700
+    }
+
+    .close {
+      border: 0;
+      background: none;
+      font-size: 24px;
+      color: #64748b;
+      cursor: pointer
+    }
+
+    .form {
+      padding: 20px
+    }
+
+    .form-section {
+      margin-bottom: 22px
+    }
+
+    .form-section h3 {
+      font-size: 14px;
+      margin: 0 0 12px
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px
+    }
+
+    .field label {
+      display: block;
+      font-size: 11px;
+      color: #64748b;
+      margin-bottom: 6px
+    }
+
+    .field select,
+    .field input {
+      width: 100%;
+      height: 38px;
+      border: 1px solid #d6e0ec;
+      border-radius: 7px;
+      padding: 0 10px;
+      color: #334155
+    }
+
+    .selected-boxes {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 12px;
+      font-size: 12px;
+      line-height: 1.8
+    }
+
+    .notice {
+      padding: 11px 12px;
+      background: #fff8e7;
+      border: 1px solid #f5d896;
+      border-radius: 8px;
+      color: #8a5a00;
+      font-size: 12px;
+      line-height: 1.6
+    }
+
+    .drawer-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 9px;
+      padding: 15px 20px;
+      border-top: 1px solid var(--line);
+      position: sticky;
+      bottom: 0;
+      background: #fff
+    }
+
+    .toast {
+      position: fixed;
+      right: 24px;
+      top: 86px;
+      background: #12345a;
+      color: #fff;
+      padding: 11px 16px;
+      border-radius: 8px;
+      z-index: 1400;
+      font-size: 12px;
+      box-shadow: 0 5px 14px rgba(15, 23, 42, .18);
+      display: none
+    }
+
+    .toast.show {
+      display: block
+    }
+
+    .confirm-mask{position:fixed;inset:0;z-index:1300;display:none;place-items:center;padding:20px;background:rgba(15,23,42,.48)}.confirm-mask.open{display:grid}.confirm-dialog{width:min(460px,94vw);border-radius:14px;background:#fff;box-shadow:0 22px 60px rgba(15,23,42,.24);overflow:hidden}.confirm-head{display:flex;gap:12px;padding:20px 20px 12px}.confirm-icon{display:grid;place-items:center;flex:0 0 38px;height:38px;border-radius:10px;background:#eaf2ff;color:#2563eb}.confirm-head h3{margin:0 0 5px;color:#172b4d;font-size:16px}.confirm-head p{margin:0;color:#64748b;font-size:12px;line-height:1.6}.confirm-summary{margin:4px 20px 16px;padding:12px 14px;border-radius:9px;background:#f7f9fc}.confirm-summary div{display:flex;justify-content:space-between;padding:5px 0;color:#64748b;font-size:12px}.confirm-summary b{color:#172b4d}.confirm-warning{margin:0 20px 18px;color:#9a6700;font-size:11px;line-height:1.6}.confirm-actions{display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid #e5eaf1;background:#fbfcfe}.confirm-actions .danger-action{margin-right:auto;border-color:#fecaca;color:#b91c1c;background:#fff}.confirm-actions .danger-action:hover{border-color:#ef4444;background:#fff5f5}.schedule-edit-body{padding:6px 20px 20px}.schedule-edit-body label{display:block;margin-bottom:7px;color:#526174;font-size:11px}.schedule-edit-body input{width:100%;height:40px;border:1px solid #ced8e5;border-radius:8px;padding:0 11px;color:#172b4d}.schedule-edit-body input:focus{outline:0;border-color:#4f8df7;box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+
+    @media(max-width:1150px) {
+      .overview {
+        grid-template-columns: 1.3fr repeat(2, 1fr)
+      }
+
+      .metric:nth-child(4),
+      .metric:nth-child(5) {
+        border-top: 1px solid var(--line)
+      }
+
+      .factory-grid {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .factory:nth-child(2) {
+        border-right: 0
+      }
+
+      .factory:nth-child(-n+2) {
+        border-bottom: 1px solid var(--line)
+      }
+    }
+
+    .detail-stats {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 16px;
+      margin-top: 16px
+    }
+
+    .detail-org {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 20px
+    }
+
+    .detail-org h2 {
+      font-size: 15px;
+      margin: 0 0 18px
+    }
+
+    .detail-org-root {
+      color: var(--primary);
+      font-weight: 700;
+      margin-bottom: 14px
+    }
+
+    .detail-org-list {
+      padding-left: 16px;
+      border-left: 1px solid #dbe5f0;
+      display: flex;
+      flex-direction: column;
+      gap: 11px
+    }
+
+    .detail-org-list button {
+      border: 0;
+      background: transparent;
+      text-align: left;
+      color: #475569;
+      font-size: 12px;
+      padding: 7px 8px;
+      border-radius: 6px;
+      cursor: pointer
+    }
+
+    .detail-org-list button.active,
+    .detail-org-list button:hover {
+      background: #eff6ff;
+      color: var(--primary)
+    }
+
+    .detail-table {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden
+    }
+
+    .detail-table h2 {
+      font-size: 15px;
+      margin: 0
+    }
+
+    .detail-table-head {
+      padding: 15px 18px;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .detail-table table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px
+    }
+
+    .detail-table th {
+      height: 42px;
+      background: #f8fafc;
+      color: #64748b;
+      text-align: left;
+      padding: 0 14px
+    }
+
+    .detail-table td {
+      height: 54px;
+      padding: 0 14px;
+      border-top: 1px solid #edf1f6
+    }
+
+    .detail-table .unit-name {
+      font-weight: 650;
+      color: #1e293b
+    }
+
+    .detail-table .subline {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 3px
+    }
+
+    .detail-table .progress {
+      width: 108px;
+      height: 6px;
+      margin-top: 5px;
+      border-radius: 99px;
+      background: #e9eef5;
+      overflow: hidden
+    }
+
+    .detail-table .progress i {
+      display: block;
+      height: 100%;
+      background: #16a34a;
+      border-radius: 99px
+    }
+
+    .detail-table .num {
+      font-size: 14px;
+      font-weight: 700
+    }
+
+    .detail-table .online {
+      color: #059669
+    }
+
+    .detail-table .upgrade {
+      color: #d97706
+    }
+
+    .detail-table .status {
+      display: inline-flex;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: #fff4df;
+      color: #b45309
+    }
+
+    .detail-table .status.latest {
+      background: #e8f8f1;
+      color: #047857
+    }
+
+    .content>.overview,
+    .content>#factoryStatus {
+      display: none
+    }
+
+    .detail-stats {
+      margin-top: 0
+    }
+
+    .section.detail-stats {
+      border: 0;
+      background: transparent
+    }
+
+    #boxStatus {
+      margin-top: 16px
+    }
+
+    @media(max-width:1150px) {
+      .detail-stats {
+        grid-template-columns: 190px minmax(0, 1fr)
+      }
+    }
+
+    @media(prefers-reduced-motion:reduce) {
+      * {
+        transition-duration: .01ms !important
+      }
+    }
+
+    .detail-table th,
+    .detail-table td {
+      padding-left: 8px;
+      padding-right: 8px;
+      font-size: 11px
+    }
+
+    .detail-table .progress {
+      width: 72px
+    }
+
+    .detail-workspace {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 16px;
+      align-items: stretch
+    }
+
+    .detail-workspace>.detail-org {
+      min-height: calc(100vh - 132px)
+    }
+
+    .detail-main {
+      min-width: 0
+    }
+
+    .unit-stats {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden
+    }
+
+    .unit-stats-head {
+      padding: 15px 18px;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .unit-stats-head h2 {
+      font-size: 15px;
+      margin: 0
+    }
+
+    .unit-stats-head p {
+      font-size: 11px;
+      color: var(--muted);
+      margin: 5px 0 0
+    }
+
+    .unit-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr))
+    }
+
+    .unit-stat-card {
+      min-height: 106px;
+      padding: 18px;
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      justify-content: center
+    }
+
+    .unit-stat-card:last-child {
+      border-right: 0
+    }
+
+    .unit-stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 9px
+    }
+
+    .unit-stat-value {
+      font-size: 23px;
+      font-weight: 750;
+      color: #1e293b;
+      white-space: nowrap
+    }
+
+    .unit-stat-value.online {
+      color: #059669
+    }
+
+    .unit-stat-value.upgrade {
+      color: #d97706
+    }
+
+    .unit-stat-value small {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--muted)
+    }
+
+    .unit-stat-status {
+      display: inline-flex;
+      align-self: flex-start;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: #fff4df;
+      color: #b45309;
+      font-size: 11px;
+      white-space: nowrap
+    }
+
+    .unit-stat-status.latest {
+      background: #e8f8f1;
+      color: #047857
+    }
+
+    .unit-stat-time {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.45;
+      color: #334155;
+      white-space: nowrap
+    }
+
+    @media(max-width:1250px) {
+      .detail-workspace {
+        grid-template-columns: 190px minmax(0, 1fr)
+      }
+
+      .unit-stat-card {
+        padding: 14px 10px
+      }
+
+      .unit-stat-value {
+        font-size: 20px
+      }
+
+      .unit-stat-time {
+        font-size: 12px
+      }
+    }
+
+    .edge-detail-page .page {
+      width: auto !important;
+      max-width: none !important;
+      margin-left: 0 !important
+    }
+    .algorithm-select-list{border:1px solid #d6e0ec;border-radius:7px;background:#fff;max-height:260px;overflow:auto}.algorithm-config-head,.algorithm-config-row{display:grid;grid-template-columns:34px minmax(120px,1.3fr) minmax(100px,.8fr) minmax(190px,1.2fr);align-items:center;gap:10px;padding:9px 12px}.algorithm-config-head{position:sticky;top:0;z-index:1;background:#f5f8fc;border-bottom:1px solid #dfe6ef;color:#64748b;font-size:12px}.algorithm-config-row{border-bottom:1px solid #edf1f5;color:#334155;font-size:12px}.algorithm-config-row:last-child{border-bottom:0}.algorithm-config-row:hover{background:#f8fbff}.algorithm-config-row input{accent-color:#2563eb}.algorithm-config-row .algorithm-name{font-weight:600;color:#172b4d}.algorithm-config-row .current-version{font-family:Consolas,monospace;color:#64748b}.algorithm-config-row select{width:100%;height:32px;border:1px solid #cbd8e8;border-radius:5px;background:#fff;color:#172b4d;padding:0 28px 0 9px}.algorithm-config-row.disabled{opacity:.55;background:#f8fafc}.algorithm-empty{padding:12px;color:#64748b;font-size:12px;background:#f8fafc;border-radius:7px}
+  </style>
+</head>
+
+<body class="edge-detail-page">
+  <style>.field-wide{grid-column:1/-1}</style>
+  <!--
+  THESIS: 以“版本差异”而非设备清单为主线，让管理人员一眼识别哪些厂矿、哪些盒子需要升级。
+  OWN-WORLD: 延续平台白底、深蓝文字、冷灰分隔与蓝色操作色；状态只使用克制的绿、橙、红。
+  STORY: 先看全局升级态势，再定位厂矿和盒子，展开核对算法版本，最后创建分批部署任务。
+  FIRST VIEWPORT: 顶部全局指标、厂矿版本态势、可筛选盒子表格；批量部署为右上主操作。
+  FORM: Operate 模式的数据密集型管理台，关键差异以表格与展开明细表达。
+  FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+  -->
+  <aside></aside>
+  <div class="page">
+    <header class="page-head">
+      <div class="page-head-main">
+        <a class="page-back" href="防灾智盒部署.html" aria-label="返回防灾智盒部署"><i class="fa fa-angle-left"></i><span>返回</span></a>
+        <div>
+          <div class="crumb">算法训练中心 / 防灾智盒部署 / 版本管理</div>
+          <div class="page-title">边缘盒子部署</div>
+        </div>
+      </div>
+      <div class="head-note"><i class="fa fa-refresh mr-1"></i>版本状态更新时间：2026-09-04 09:36</div>
+    </header>
+    <main class="content">
+      <section class="overview" aria-label="边缘盒子版本概览">
+        <div class="overview-intro">
+          <div class="overview-icon"><i class="fa fa-hdd-o"></i></div>
+          <div>
+            <h2>边缘节点版本态势</h2>
+            <p>统一查看各厂矿算法盒子的在线状态、算法版本差异和最近部署情况。</p>
+          </div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">纳管厂矿</div>
+          <div class="metric-value">4</div>
+          <div class="metric-sub">已全部接入统一管理</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">边缘盒子</div>
+          <div class="metric-value">26</div>
+          <div class="metric-sub">在线 24 · 离线 2</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">已是最新版本</div>
+          <div class="metric-value">17</div>
+          <div class="metric-sub">版本一致率 65.4%</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">需要升级</div>
+          <div class="metric-value warn">9</div>
+          <div class="metric-sub">涉及 7 种算法</div>
+        </div>
+      </section>
+
+      <section class="section" id="factoryStatus">
+        <div class="section-head">
+          <div>
+            <h2>厂矿版本态势</h2>
+            <p>点击厂矿可快速筛选下方盒子</p>
+          </div><button class="link" id="clearFactory">查看全部厂矿</button>
+        </div>
+        <div class="factory-grid" id="factoryGrid"></div>
+      </section>
+
+      <div class="detail-workspace">
+        <aside class="detail-org">
+          <h2>组织架构</h2>
+          <div class="detail-org-root"><i class="fa fa-building"></i> 鞍钢矿业公司</div>
+          <div class="detail-org-list" id="detailOrgList"></div>
+        </aside>
+        <div class="detail-main">
+          <section class="unit-stats">
+            <div class="unit-stats-head">
+              <h2 id="detailTableTitle">单位防灾智盒统计</h2>
+              <p>查看当前单位防灾智盒规模、在线状态和版本差异</p>
+            </div>
+            <div id="unitStatCards" class="unit-stat-grid"></div>
+          </section>
+          <section class="section" id="boxStatus">
+            <div class="section-head">
+              <div>
+                <h2>边缘盒子清单</h2>
+                <p>展开盒子可查看全部算法的当前版本和最新版本</p>
+              </div>
+              <div><button class="btn" id="syncBtn"><i class="fa fa-refresh mr-1"></i>同步版本状态</button><button
+                  class="btn primary" id="batchBtn" disabled><i class="fa fa-cloud-upload mr-1"></i>批量部署</button></div>
+            </div>
+            <div class="toolbar">
+              <select id="statusFilter" class="control">
+                <option value="">全部版本状态</option>
+                <option value="upgrade">需要升级</option>
+                <option value="scheduled">等待定时执行</option>
+                <option value="pending">待执行</option>
+                <option value="upgrading">升级中</option>
+                <option value="failed">升级失败</option>
+                <option value="rollback">回滚中</option>
+                <option value="rolledback">已回滚</option>
+                <option value="latest">已是最新</option>
+                <option value="offline">离线</option>
+              </select>
+              <select id="typeFilter" class="control">
+                <option value="">全部盒子型号</option>
+                <option>Atlas 500</option>
+                <option>Jetson AGX</option>
+                <option>昇腾 310B</option>
+              </select>
+              <input id="keyword" class="control search" placeholder="搜索盒子名称或编号">
+              <span class="toolbar-spacer"></span><span id="selectedText" class="head-note">未选择盒子</span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width:42px"><input id="checkAll" class="check" type="checkbox" aria-label="全选盒子"></th>
+                    <th style="width:44px"></th>
+                    <th>厂矿 / 边缘盒子</th>
+                    <th>在线状态</th>
+                    <th>算法现状</th>
+                    <th>最近更新时间</th>
+                    <th>版本状态</th>
+                    <th style="text-align:right">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="boxRows"></tbody>
+              </table>
+              <div id="empty" class="empty"><i class="fa fa-search"></i>
+                <div>没有符合当前条件的边缘盒子</div>
+              </div>
+            </div>
+            <div class="pagination"><span id="resultCount">共 0 台盒子</span><span>当前展示全部结果</span></div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="drawerMask" class="drawer-mask"></div>
+  <aside id="deployDrawer" class="drawer" data-keep-sidebar="true" aria-hidden="true">
+    <div class="drawer-head">
+      <div>
+        <div class="crumb">边缘盒子部署 / 创建任务</div>
+        <div class="drawer-title" id="drawerTitle">新建算法部署任务</div>
+      </div><button id="closeDrawer" class="close" aria-label="关闭">×</button>
+    </div>
+    <div id="deploySteps" class="deploy-steps" hidden><span class="deploy-step active" data-step-indicator="1"><b>1</b>确认部署范围</span><i class="deploy-step-line"></i><span class="deploy-step" data-step-indicator="2"><b>2</b>配置算法版本</span></div>
+    <div class="form">
+      <div class="form-section" id="scopeSection">
+        <h3>部署范围</h3>
+        <div id="batchSummary" class="batch-summary" hidden></div>
+        <div id="selectedBoxes" class="selected-boxes"></div>
+      </div>
+      <div class="form-section" id="configSection">
+        <h3>版本配置</h3>
+        <div class="field-grid">
+          <div class="field"><label>部署方式</label><select id="deployMethod">
+              <!-- <option>灰度部署</option> -->
+              <option>立即全部部署</option>
+              <option>定时部署</option>
+            </select></div>
+          <div class="field"><label>失败策略</label><select id="failurePolicy">
+              <option>自动回滚上一版本</option>
+              <!-- <option>暂停并等待处理</option> -->
+              <option>自动重试 2 次</option>
+            </select></div>
+          <div class="field field-wide" id="scheduleField" hidden><label>计划执行时间</label><input id="scheduleTime" type="datetime-local"><small class="schedule-help">任务将在计划时间自动进入执行队列</small></div>
+          <div class="field field-wide"><label>算法版本配置（可多选，每个算法独立设置目标版本）</label><div id="deployAlgorithms" class="algorithm-select-list"></div></div>
+        </div>
+      </div>
+      <div class="form-section">
+        <h3>安全校验</h3>
+        <div class="notice"><i class="fa fa-shield mr-1"></i>系统将在下发前校验盒子型号、运行环境、磁盘空间和模型包校验值。灰度验证通过后才会继续部署其余节点。</div>
+      </div>
+    </div>
+    <div class="drawer-actions"><button class="btn" id="cancelDeploy">取消</button><button class="btn" id="prevDeploy" hidden>上一步</button><button class="btn primary" id="nextDeploy" hidden>下一步：配置版本</button><button class="btn primary" id="createTask">创建部署任务</button></div>
+  </aside>
+  <div id="confirmMask" class="confirm-mask" role="presentation">
+    <section class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <div class="confirm-head"><span class="confirm-icon"><i class="fa fa-cloud-upload"></i></span><div><h3 id="confirmTitle">确认提交部署任务？</h3><p>请确认本次算法升级范围与执行策略，提交后系统将进入任务队列。</p></div></div>
+      <div id="confirmSummary" class="confirm-summary"></div>
+      <div class="confirm-warning"><i class="fa fa-exclamation-circle mr-1"></i>升级过程中相关算法可能短暂不可用，请避免在关键生产时段执行。</div>
+      <div class="confirm-actions"><button class="btn" id="cancelConfirm">返回修改</button><button class="btn primary" id="confirmSubmit">确认提交</button></div>
+    </section>
+  </div>
+  <div id="scheduleManageMask" class="confirm-mask" role="presentation">
+    <section class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="scheduleManageTitle">
+      <div class="confirm-head"><span class="confirm-icon"><i class="fa fa-calendar"></i></span><div><h3 id="scheduleManageTitle">定时任务管理</h3><p id="scheduleManageBox"></p></div></div>
+      <div class="schedule-edit-body"><label for="scheduleEditTime">计划执行时间</label><input id="scheduleEditTime" type="datetime-local"><small class="schedule-help">修改后的时间必须晚于当前时间</small></div>
+      <div class="confirm-actions"><button class="btn danger-action" id="cancelScheduleTask">取消定时任务</button><button class="btn" id="closeScheduleManage">放弃修改</button><button class="btn primary" id="saveScheduleTime">保存时间</button></div>
+    </section>
+  </div>
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const factories = [
+      { name: '齐大山选矿厂', boxes: 8, online: 8, upgrade: 3 },
+      { name: '眼前山铁矿', boxes: 7, online: 6, upgrade: 2 },
+      { name: '东鞍山烧结厂', boxes: 6, online: 6, upgrade: 1 },
+      { name: '弓长岭矿业', boxes: 5, online: 4, upgrade: 3 }
+    ];
+    const detailUnits = [
+      { code: 'DW-001', name: '齐大山选矿厂', total: 14, online: 14, upgrade: 3, time: '2026-09-05 10:18' },
+      { code: 'DW-002', name: '眼前山铁矿', total: 13, online: 12, upgrade: 4, time: '2026-09-05 10:16' },
+      { code: 'DW-003', name: '东鞍山烧结厂', total: 12, online: 12, upgrade: 0, time: '2026-09-05 10:15' },
+      { code: 'DW-004', name: '弓长岭矿业', total: 11, online: 10, upgrade: 3, time: '2026-09-05 10:12' },
+      { code: 'DW-005', name: '大孤山球团厂', total: 10, online: 10, upgrade: 1, time: '2026-09-05 10:09' },
+      { code: 'DW-006', name: '鞍千矿业', total: 9, online: 8, upgrade: 2, time: '2026-09-05 10:06' },
+      { code: 'DW-007', name: '关宝山矿业', total: 9, online: 8, upgrade: 4, time: '2026-09-05 10:03' },
+      { code: 'DW-008', name: '矿建工程公司', total: 8, online: 7, upgrade: 0, time: '2026-09-05 09:58' }
+    ];
+    const algorithms = ['安全帽识别', '人员入侵识别', '烟火识别', '临边防护识别', '反光衣识别', '人员聚集识别', '车辆违停识别', '皮带跑偏识别', '设备异物识别', '抽烟识别', '打电话识别', '高处作业识别', '动火作业识别', '区域滞留识别', '跌倒识别', '车辆超速识别', '未系安全带识别', '消防通道占用', '设备渗漏识别', '人员离岗识别', '吊装区域入侵', '机械防护缺失'];
+    const boxes = [
+      { id: 'QDS-EDGE-01', name: '东区主控边缘盒子', factory: '齐大山选矿厂', type: 'Atlas 500', online: true, count: 22, base: 'Runtime 6.0.1', updated: '2026-09-02 18:26', upgrade: 2, recent: ['安全帽识别', '人员入侵识别'] },
+      { id: 'QDS-EDGE-02', name: '西区皮带廊盒子', factory: '齐大山选矿厂', type: '昇腾 310B', online: true, count: 20, base: 'Runtime 6.0.1', updated: '2026-08-18 02:10', upgrade: 3, recent: ['皮带跑偏识别'] },
+      { id: 'QDS-EDGE-03', name: '破碎站边缘盒子', factory: '齐大山选矿厂', type: 'Jetson AGX', online: true, count: 18, base: 'JetPack 6.0', updated: '2026-09-03 21:05', upgrade: 0, recent: ['烟火识别', '区域滞留识别'] },
+      { id: 'YQS-EDGE-01', name: '采场北区盒子', factory: '眼前山铁矿', type: 'Atlas 500', online: true, count: 22, base: 'Runtime 5.1.2', updated: '2026-08-12 23:40', upgrade: 4, recent: ['车辆超速识别'] },
+      { id: 'YQS-EDGE-02', name: '选矿主厂房盒子', factory: '眼前山铁矿', type: 'Jetson AGX', online: false, count: 16, base: 'JetPack 5.1', updated: '2026-07-28 11:16', upgrade: 5, recent: ['安全帽识别'] },
+      { id: 'DAS-EDGE-01', name: '烧结作业区盒子', factory: '东鞍山烧结厂', type: '昇腾 310B', online: true, count: 21, base: 'Runtime 6.0.1', updated: '2026-09-04 08:12', upgrade: 0, recent: ['动火作业识别', '烟火识别'] },
+      { id: 'DAS-EDGE-02', name: '料场边缘盒子', factory: '东鞍山烧结厂', type: 'Atlas 500', online: true, count: 19, base: 'Runtime 6.0.1', updated: '2026-08-29 20:30', upgrade: 1, recent: ['车辆违停识别'] },
+      { id: 'GCL-EDGE-01', name: '井口监控盒子', factory: '弓长岭矿业', type: 'Jetson AGX', online: true, count: 22, base: 'JetPack 6.0', updated: '2026-08-10 16:08', upgrade: 3, recent: ['人员入侵识别'] }
+    ];
+    const selected = new Set();
+    const q = s => document.querySelector(s);
+    const getStatus = b => !b.online ? 'offline' : b.deployStatus || (b.upgrade ? 'upgrade' : 'latest');
+    const deployStateLabels = { scheduled: '等待定时执行', pending: '待执行', upgrading: '升级中', failed: '升级失败', rollback: '回滚中', rolledback: '已回滚' };
+    function formatScheduleTime(value) { return value ? value.replace('T', ' ') : '' }
+    function deployStateTag(state, scheduledAt) { if (state === 'scheduled') return `<div><span class="tag purple"><i class="fa fa-calendar-o mr-1"></i>等待定时执行</span>${scheduledAt ? `<div class="status-time">计划 ${formatScheduleTime(scheduledAt)}</div>` : ''}</div>`; if (state === 'pending') return '<span class="tag info"><i class="fa fa-clock-o mr-1"></i>待执行</span>'; if (state === 'upgrading') return '<span class="tag info"><i class="fa fa-spinner fa-spin"></i>升级中</span>'; if (state === 'failed') return '<span class="tag danger"><i class="fa fa-exclamation-circle mr-1"></i>升级失败</span>'; if (state === 'rollback') return '<span class="tag purple"><i class="fa fa-undo mr-1"></i>回滚中</span>'; if (state === 'rolledback') return '<span class="tag muted"><i class="fa fa-undo mr-1"></i>已回滚</span>'; return '' }
+    function algorithmsFor(box) { return algorithms.slice(0, box.count).map((name, i) => ({ name, current: `V${2 + (i % 2)}.${Math.max(0, 4 - (i % 3))}.${i % 5}`, latest: i < box.upgrade ? `V3.${6 - (i % 2)}.${(i + 2) % 5}` : `V${2 + (i % 2)}.${Math.max(0, 4 - (i % 3))}.${i % 5}`, changed: box.recent.includes(name) })) }
+    function renderFactories() { q('#factoryGrid').innerHTML = factories.map(f => `<article class="factory" data-factory="${f.name}" tabindex="0"><div class="factory-name">${f.name}</div><div class="factory-meta"><span>盒子总数<b>${f.boxes}</b></span><span>在线<b>${f.online}</b></span><span>待升级<b class="alert">${f.upgrade}</b></span></div></article>`).join(''); document.querySelectorAll('.factory').forEach(el => { el.onclick = () => renderBoxes(); el.onkeydown = e => { if (e.key === 'Enter') renderBoxes() } }) }
+    function renderAlgoDetail(box) { const rows = algorithmsFor(box).map(a => { const taskState = box.deployItems?.[a.name]; const status = taskState ? deployStateTag(taskState) : a.current === a.latest ? '<span class="latest-text">已是最新</span>' : '<span class="upgrade-text">可升级</span>'; return `<tr><td>${a.name}${a.changed ? ' <span class="tag neutral">最近更新</span>' : ''}</td><td class="version">${a.current}</td><td class="version">${a.latest}</td><td>${status}</td><td>${taskState ? '刚刚提交' : a.changed ? '2026-09-02 18:26' : '—'}</td></tr>` }).join(''); return `<tr class="detail-row" data-detail="${box.id}"><td class="detail-cell" colspan="8"><div class="algo-panel"><div class="algo-panel-head"><strong>${box.name} · 已部署算法（${box.count}种）</strong><span class="legend">最近更新：${box.recent.join('、')}</span></div><div class="algo-table"><table><thead><tr><th>算法名称</th><th>当前版本</th><th>最新版本</th><th>升级状态</th><th>最近更新时间</th></tr></thead><tbody>${rows}</tbody></table></div></div></td></tr>` }
+    function selectDetailUnit(code) { const unit = detailUnits.find(item => item.code === code) || detailUnits[0]; document.querySelectorAll('#detailOrgList button').forEach(btn => btn.classList.toggle('active', btn.dataset.unit === unit.code)); const rate = (unit.online / unit.total * 100).toFixed(1); q('#detailTableTitle').textContent = unit.name + ' · 防灾智盒统计'; q('#unitStatCards').innerHTML = `<div class="unit-stat-card"><div class="unit-stat-label">防灾智盒总数</div><div class="unit-stat-value">${unit.total}<small> 台</small></div></div><div class="unit-stat-card"><div class="unit-stat-label">在线数</div><div class="unit-stat-value online">${unit.online}<small> 台</small></div></div><div class="unit-stat-card"><div class="unit-stat-label">在线率</div><div class="unit-stat-value">${rate}<small>%</small></div></div><div class="unit-stat-card"><div class="unit-stat-label">待升级数</div><div class="unit-stat-value upgrade">${unit.upgrade}<small> 台</small></div></div><div class="unit-stat-card"><div class="unit-stat-label">最近同步时间</div><div class="unit-stat-time">${unit.time.split(' ')[0]}<br>${unit.time.split(' ')[1]}</div></div>`; renderBoxes(); history.replaceState(null, '', `?unit=${encodeURIComponent(unit.code)}`) }
+    function renderDetailUnits() { q('#detailOrgList').innerHTML = detailUnits.map(unit => `<button data-unit="${unit.code}">${unit.name}</button>`).join(''); document.querySelectorAll('#detailOrgList button').forEach(btn => btn.onclick = () => selectDetailUnit(btn.dataset.unit)); selectDetailUnit(new URLSearchParams(location.search).get('unit') || 'DW-001') }
+    function renderBoxes() { const status = q('#statusFilter').value, type = q('#typeFilter').value, key = q('#keyword').value.trim().toLowerCase(); const list = boxes.filter(b => (!status || getStatus(b) === status) && (!type || b.type === type) && (!key || (b.id + b.name).toLowerCase().includes(key))); q('#boxRows').innerHTML = list.map(b => { const st = getStatus(b); const statusHtml = st === 'offline' ? '<span class="tag danger"><i class="dot"></i>离线</span>' : st === 'upgrade' ? `<span class="tag warn">${b.upgrade}种算法待升级</span>` : st === 'latest' ? '<span class="tag ok">已是最新</span>' : deployStateTag(st, b.scheduledAt); const retry = ['failed', 'rolledback'].includes(st); const action = st === 'scheduled' ? `<button class="link" data-manage-schedule="${b.id}">定时管理</button>` : st === 'upgrade' ? `<button class="link" data-deploy="${b.id}">部署升级</button>` : retry ? `<button class="link" data-deploy="${b.id}">重新部署</button>` : '<span class="muted-action">—</span>'; return `<tr class="box-row"><td><input class="check row-check" type="checkbox" data-id="${b.id}" ${selected.has(b.id) ? 'checked' : ''}></td><td><button class="expander" data-expand="${b.id}" aria-label="展开算法版本"><i class="fa fa-chevron-right"></i></button></td><td><div class="box-name">${b.name}</div><div class="subline">${b.id}</div></td><td>${b.online ? '<span class="tag ok"><i class="dot"></i>在线</span>' : '<span class="tag danger"><i class="dot"></i>离线</span>'}</td><td><div class="algo-summary"><span class="algo-count">${b.count}</span> 种算法</div></td><td><div>${b.updated.split(' ')[0]}</div></td><td>${statusHtml}</td><td style="text-align:right">${action}</td></tr>${renderAlgoDetail(b)}` }).join(''); q('#empty').style.display = list.length ? 'none' : 'block'; q('#resultCount').textContent = `共 26 台盒子 · 当前展示 ${list.length} 台示例数据`; bindRows(); updateSelected() }
+    function bindRows() { document.querySelectorAll('[data-expand]').forEach(btn => btn.onclick = () => { btn.classList.toggle('open'); document.querySelector(`[data-detail="${btn.dataset.expand}"]`).classList.toggle('open') }); document.querySelectorAll('.row-check').forEach(cb => cb.onchange = () => { cb.checked ? selected.add(cb.dataset.id) : selected.delete(cb.dataset.id); updateSelected() }); document.querySelectorAll('[data-deploy]').forEach(btn => btn.onclick = () => { selected.clear(); selected.add(btn.dataset.deploy); renderBoxes(); openDrawer('single') }); document.querySelectorAll('[data-manage-schedule]').forEach(btn => btn.onclick = () => openScheduleManage(btn.dataset.manageSchedule)) }
+    function updateSelected() { q('#selectedText').textContent = selected.size ? `已选择 ${selected.size} 台盒子` : '未选择盒子'; q('#batchBtn').disabled = !selected.size; q('#checkAll').checked = boxes.length > 0 && boxes.every(b => selected.has(b.id)) }
+    function targetVersions(algorithm) { const match = algorithm.latest.match(/^V(\d+)\.(\d+)\.(\d+)$/); const versions = [algorithm.latest]; if (match) { const major = Number(match[1]), minor = Number(match[2]), patch = Number(match[3]); if (patch > 0) versions.push(`V${major}.${minor}.${patch - 1}`); if (minor > 0) versions.push(`V${major}.${minor - 1}.0`) } versions.push(...algorithm.currents); return [...new Set(versions)] }
+    let deployMode = 'single', batchIncluded = new Set(), pendingConfigs = [], currentScheduleBox = null;
+    function versionOptions(a) { return targetVersions(a).map((version, i) => `<option value="${version}">${version}${i === 0 ? '（最新稳定版）' : ''}</option>`).join('') }
+    function bindAlgorithmChecks() { document.querySelectorAll('.algorithm-check').forEach(check => check.onchange = () => { const row = check.closest('[data-config-row]'), target = row.querySelector('.algorithm-target'); target.disabled = !check.checked; row.classList.toggle('disabled', !check.checked); updateBatchConfirm() }) }
+    function renderSingleConfig(box) { const items = algorithmsFor(box).filter(a => a.current !== a.latest).map(a => ({ ...a, currents: [a.current] })); q('#deployAlgorithms').innerHTML = items.length ? `<div class="algorithm-config-head"><span>选择</span><span>算法名称</span><span>当前版本</span><span>目标版本</span></div>${items.map((a, i) => `<div class="algorithm-config-row" data-config-row data-box="${box.id}" data-algorithm="${a.name}"><input class="algorithm-check" type="checkbox" value="${a.name}" id="algorithm-${i}" checked><label class="algorithm-name" for="algorithm-${i}">${a.name}</label><span class="current-version">${a.current}</span><select class="algorithm-target">${versionOptions(a)}</select></div>`).join('')}` : '<div class="algorithm-empty">当前盒子的算法均已是最新版本</div>'; bindAlgorithmChecks() }
+    function renderBatchScope(chosen) { const deployable = chosen.filter(b => b.online && b.upgrade > 0), offline = chosen.filter(b => !b.online).length, latest = chosen.filter(b => b.online && !b.upgrade).length, configs = deployable.filter(b => batchIncluded.has(b.id)).reduce((sum, b) => sum + b.upgrade, 0); q('#batchSummary').innerHTML = `<div class="batch-summary-item"><span>已选择盒子</span><b>${chosen.length} 台</b></div><div class="batch-summary-item"><span>可部署</span><b>${deployable.length} 台</b></div><div class="batch-summary-item warn"><span>已排除</span><b>${offline + latest} 台</b></div><div class="batch-summary-item"><span>待配置算法</span><b>${configs} 项</b></div>`; q('#selectedBoxes').className = 'scope-list'; q('#selectedBoxes').innerHTML = chosen.map(b => { const available = b.online && b.upgrade > 0, reason = !b.online ? '离线，已排除' : !b.upgrade ? '已是最新' : `${b.upgrade} 种待升级`; return `<div class="scope-row ${available ? '' : 'unavailable'}"><input type="checkbox" class="scope-check" data-box="${b.id}" ${available && batchIncluded.has(b.id) ? 'checked' : ''} ${available ? '' : 'disabled'}><div><b>${b.name}</b><div class="subline">${b.id}</div></div><span>${b.factory}</span><span class="scope-status ${available ? 'compat-ok' : 'compat-warn'}">${reason}</span></div>` }).join(''); document.querySelectorAll('.scope-check').forEach(check => check.onchange = () => { check.checked ? batchIncluded.add(check.dataset.box) : batchIncluded.delete(check.dataset.box); renderBatchScope(chosen) }) }
+    function renderBatchConfig() {
+      const chosen = boxes.filter(b => batchIncluded.has(b.id));
+      const algorithmItems = chosen.flatMap(b => algorithmsFor(b).filter(a => a.current !== a.latest));
+      const allNames = [...new Set(algorithmItems.map(a => a.name))];
+      const affectedCount = name => chosen.filter(b => algorithmsFor(b).some(a => a.name === name && a.current !== a.latest)).length;
+      q('#selectedBoxes').className = 'selected-boxes';
+      q('#selectedBoxes').innerHTML = `<b>${chosen.length} 台盒子进入部署任务</b>，每个盒子的算法和目标版本将独立保存。`;
+      const scope = `<div class="algorithm-scope"><div class="algorithm-scope-head"><div class="algorithm-scope-heading"><span class="algorithm-scope-icon"><i class="fa fa-cubes"></i></span><div><div class="algorithm-scope-title">选择本次部署的算法</div><span id="algorithmScopeCount" class="algorithm-scope-count">已选择 ${allNames.length} / ${allNames.length} 种算法</span></div></div><label class="algorithm-select-all"><input id="allBatchAlgorithms" type="checkbox" checked><span>全部选择</span></label></div><div class="algorithm-scope-grid">${allNames.map((name, i) => `<label class="algorithm-scope-item"><input class="algorithm-scope-check" type="checkbox" value="${name}" id="scope-algorithm-${i}" checked><span class="algorithm-scope-copy"><span class="algorithm-scope-name">${name}</span><small class="algorithm-scope-boxes">涉及 ${affectedCount(name)} 台盒子</small></span></label>`).join('')}</div></div>`;
+      const groups = chosen.map((box, boxIndex) => { const items = algorithmsFor(box).filter(a => a.current !== a.latest).map(a => ({ ...a, currents: [a.current] })); return `<div class="batch-box open" data-batch-box="${box.id}"><div class="batch-box-head" data-batch-toggle><input type="checkbox" checked disabled><div><b>${box.name}</b><div class="box-meta">${box.id} · ${box.factory}</div></div><span class="upgrade-text"><b data-visible-count>${items.length}</b> 种待升级</span><i class="fa fa-chevron-up batch-chevron"></i></div><div class="batch-box-body">${items.map((a, i) => `<div class="algorithm-config-row" data-config-row data-box="${box.id}" data-algorithm="${a.name}"><input class="algorithm-check" type="checkbox" value="${a.name}" id="batch-${boxIndex}-${i}" checked><label class="algorithm-name" for="batch-${boxIndex}-${i}">${a.name}</label><span class="current-version">${a.current}</span><select class="algorithm-target">${versionOptions(a)}</select></div>`).join('')}</div></div>` }).join('');
+      q('#deployAlgorithms').innerHTML = `${scope}<div class="deploy-confirm version-auto-note">已根据每台盒子的兼容环境自动选择最新稳定版本，可在下方单独调整。</div><div class="batch-config-list">${groups}</div><div id="deployConfirm" class="deploy-confirm"></div>`;
+      document.querySelectorAll('[data-batch-toggle]').forEach(head => head.onclick = e => { if (e.target.tagName !== 'INPUT') head.closest('.batch-box').classList.toggle('open') });
+      const allCheck = q('#allBatchAlgorithms');
+      const applyAlgorithmScope = () => { const active = new Set([...document.querySelectorAll('.algorithm-scope-check:checked')].map(check => check.value)); document.querySelectorAll('[data-config-row]').forEach(row => row.hidden = !active.has(row.dataset.algorithm)); document.querySelectorAll('[data-batch-box]').forEach(group => { const visibleRows = [...group.querySelectorAll('[data-config-row]')].filter(row => !row.hidden); group.classList.toggle('filtered-out', !visibleRows.length); group.querySelector('[data-visible-count]').textContent = visibleRows.length }); const selectedCount = active.size; q('#algorithmScopeCount').textContent = `已选择 ${selectedCount} / ${allNames.length} 种算法`; allCheck.checked = selectedCount === allNames.length; allCheck.indeterminate = selectedCount > 0 && selectedCount < allNames.length; q('.algorithm-select-all span').textContent = selectedCount === allNames.length ? '取消全选' : '全部选择'; updateBatchConfirm() };
+      document.querySelectorAll('.algorithm-scope-check').forEach(check => check.onchange = applyAlgorithmScope);
+      allCheck.onchange = () => { document.querySelectorAll('.algorithm-scope-check').forEach(check => check.checked = allCheck.checked); applyAlgorithmScope() };
+      bindAlgorithmChecks(); updateBatchConfirm();
+    }
+    function updateBatchConfirm() { if (deployMode !== 'batch' || !q('#deployConfirm')) return; const rows = [...document.querySelectorAll('[data-config-row]')].filter(row => !row.hidden && row.querySelector('.algorithm-check:checked')); const boxCount = new Set(rows.map(row => row.dataset.box)).size; q('#deployConfirm').textContent = `本次将向 ${boxCount} 台盒子部署，共包含 ${rows.length} 项独立算法版本配置。${boxCount < batchIncluded.size ? ` ${batchIncluded.size - boxCount} 台盒子因无部署项已排除。` : ''}` }
+    function setDeployStep(step) { const batch = deployMode === 'batch'; q('#scopeSection').style.display = !batch || step === 1 ? '' : 'none'; q('#configSection').style.display = !batch || step === 2 ? '' : 'none'; document.querySelectorAll('[data-step-indicator]').forEach(el => el.classList.toggle('active', Number(el.dataset.stepIndicator) === step)); q('#prevDeploy').hidden = !batch || step === 1; q('#nextDeploy').hidden = !batch || step === 2; q('#createTask').hidden = batch && step === 1; if (batch && step === 2) renderBatchConfig() }
+    function openDrawer(mode = 'single') { deployMode = mode; const chosen = boxes.filter(b => selected.has(b.id)); q('#deployDrawer').classList.toggle('batch-mode', mode === 'batch'); q('#deploySteps').hidden = mode !== 'batch'; q('#batchSummary').hidden = mode !== 'batch'; q('#drawerTitle').textContent = mode === 'batch' ? '新建批量算法部署任务' : '新建算法部署任务'; if (mode === 'batch') { batchIncluded = new Set(chosen.filter(b => b.online && b.upgrade > 0).map(b => b.id)); renderBatchScope(chosen); setDeployStep(1) } else { q('#selectedBoxes').className = 'selected-boxes'; q('#selectedBoxes').innerHTML = chosen.map(b => `<div><b>${b.name}</b>　${b.factory}　<span class="version">${b.id}</span></div>`).join(''); renderSingleConfig(chosen[0]); setDeployStep(2) } q('#drawerMask').classList.add('open'); q('#deployDrawer').classList.add('open'); q('#deployDrawer').setAttribute('aria-hidden', 'false') }
+    function closeDrawer() { q('#drawerMask').classList.remove('open'); q('#deployDrawer').classList.remove('open'); q('#deployDrawer').setAttribute('aria-hidden', 'true') }
+    function localDateTimeValue(date) { const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000); return local.toISOString().slice(0, 16) }
+    function toggleScheduleField() { const scheduled = q('#deployMethod').value === '定时部署', field = q('#scheduleField'), input = q('#scheduleTime'); field.hidden = !scheduled; input.required = scheduled; input.min = localDateTimeValue(new Date(Date.now() + 60000)); if (scheduled && !input.value) { const defaultTime = new Date(); defaultTime.setDate(defaultTime.getDate() + 1); defaultTime.setHours(2, 0, 0, 0); input.value = localDateTimeValue(defaultTime) } }
+    function openConfirm(configs) { pendingConfigs = configs; const boxCount = new Set(configs.map(item => item.box)).size, scheduled = q('#deployMethod').value === '定时部署'; q('#confirmSummary').innerHTML = `<div><span>部署盒子</span><b>${boxCount} 台</b></div><div><span>算法配置</span><b>${configs.length} 项</b></div><div><span>部署方式</span><b>${q('#deployMethod').value}</b></div>${scheduled ? `<div><span>计划执行时间</span><b>${formatScheduleTime(q('#scheduleTime').value)}</b></div>` : ''}<div><span>失败策略</span><b>${q('#failurePolicy').value}</b></div>`; q('#confirmMask').classList.add('open'); setTimeout(() => q('#confirmSubmit').focus(), 0) }
+    function closeConfirm() { q('#confirmMask').classList.remove('open') }
+    function openScheduleManage(boxId) { currentScheduleBox = boxes.find(box => box.id === boxId); if (!currentScheduleBox) return; const input = q('#scheduleEditTime'); input.min = localDateTimeValue(new Date(Date.now() + 60000)); input.value = currentScheduleBox.scheduledAt || ''; q('#scheduleManageBox').textContent = `${currentScheduleBox.name} · ${currentScheduleBox.id}`; q('#scheduleManageMask').classList.add('open'); setTimeout(() => input.focus(), 0) }
+    function closeScheduleManage() { q('#scheduleManageMask').classList.remove('open'); currentScheduleBox = null }
+    function saveScheduleTime() { const value = q('#scheduleEditTime').value; if (!value || new Date(value).getTime() <= Date.now()) { toast('计划执行时间必须晚于当前时间'); q('#scheduleEditTime').focus(); return } currentScheduleBox.scheduledAt = value; closeScheduleManage(); renderBoxes(); toast(`计划执行时间已修改为 ${formatScheduleTime(value)}`) }
+    function cancelScheduleTask() { if (!currentScheduleBox || !window.confirm('确认取消该盒子的定时部署任务吗？取消后将恢复为待升级状态。')) return; currentScheduleBox.deployStatus = null; currentScheduleBox.scheduledAt = ''; currentScheduleBox.deployItems = null; closeScheduleManage(); renderBoxes(); toast('定时部署任务已取消') }
+    function submitDeployTask() { const grouped = new Map(), scheduled = q('#deployMethod').value === '定时部署', state = scheduled ? 'scheduled' : 'pending', scheduledAt = scheduled ? q('#scheduleTime').value : ''; pendingConfigs.forEach(item => { if (!grouped.has(item.box)) grouped.set(item.box, []); grouped.get(item.box).push(item.algorithm) }); grouped.forEach((names, boxId) => { const box = boxes.find(item => item.id === boxId); if (!box) return; box.deployStatus = state; box.scheduledAt = scheduledAt; box.deployItems = Object.fromEntries(names.map(name => [name, state])) }); closeConfirm(); closeDrawer(); renderBoxes(); toast(scheduled ? `定时部署任务创建成功，将于 ${formatScheduleTime(scheduledAt)} 执行` : '部署任务创建成功，正在等待执行') }
+    function toast(text) { q('#toast').textContent = text; q('#toast').classList.add('show'); setTimeout(() => q('#toast').classList.remove('show'), 2200) }
+    renderFactories(); renderBoxes(); renderDetailUnits();
+    ['statusFilter', 'typeFilter'].forEach(id => q('#' + id).onchange = renderBoxes); q('#keyword').oninput = renderBoxes; q('#checkAll').onchange = e => { document.querySelectorAll('.row-check').forEach(cb => { cb.checked = e.target.checked; cb.checked ? selected.add(cb.dataset.id) : selected.delete(cb.dataset.id) }); updateSelected() }; q('#batchBtn').onclick = () => openDrawer('batch'); q('#nextDeploy').onclick = () => { if (!batchIncluded.size) { toast('没有可部署的在线盒子，请重新选择'); return } setDeployStep(2) }; q('#prevDeploy').onclick = () => setDeployStep(1); q('#drawerMask').onclick = closeDrawer; q('#closeDrawer').onclick = closeDrawer; q('#cancelDeploy').onclick = closeDrawer; q('#syncBtn').onclick = () => toast('版本状态同步完成，数据已更新'); q('#deployMethod').onchange = toggleScheduleField; toggleScheduleField(); q('#createTask').onclick = () => { const configs = [...document.querySelectorAll('.algorithm-check:checked')].map(check => { const row = check.closest('[data-config-row]'); return { row, box: row.dataset.box, algorithm: check.value, target: row.querySelector('.algorithm-target').value } }).filter(item => !item.row.hidden); if (!configs.length) { toast('请至少选择一个待升级算法'); return } if (q('#deployMethod').value === '定时部署') { const value = q('#scheduleTime').value; if (!value) { toast('请选择计划执行时间'); q('#scheduleTime').focus(); return } if (new Date(value).getTime() <= Date.now()) { toast('计划执行时间必须晚于当前时间'); q('#scheduleTime').focus(); return } } openConfirm(configs) }; q('#cancelConfirm').onclick = closeConfirm; q('#confirmSubmit').onclick = submitDeployTask; q('#confirmMask').onclick = e => { if (e.target === q('#confirmMask')) closeConfirm() }; q('#closeScheduleManage').onclick = closeScheduleManage; q('#saveScheduleTime').onclick = saveScheduleTime; q('#cancelScheduleTask').onclick = cancelScheduleTask; q('#scheduleManageMask').onclick = e => { if (e.target === q('#scheduleManageMask')) closeScheduleManage() }; document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if (q('#scheduleManageMask').classList.contains('open')) closeScheduleManage(); else if (q('#confirmMask').classList.contains('open')) closeConfirm(); else closeDrawer() });
+  </script>
+  <script src="navigation.js?v=20260904-5"></script>
+</body>
+
+</html>

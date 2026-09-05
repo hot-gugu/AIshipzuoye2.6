@@ -30,6 +30,8 @@
         }
     </script>
     <style type="text/tailwindcss">
+        /* 领导履职台账改用统一顶部导航，隐藏页面内重复的功能菜单 */
+        #legacy-ledger-menu { display: none !important; }
         @layer utilities {
             .content-auto {
                 content-visibility: auto;
@@ -70,7 +72,7 @@
 <body class="text-textMain overflow-hidden font-sans">
     <div class="flex h-screen w-full">
         <!-- 左侧侧边栏（保持统一层级样式，领导履职台账为一级菜单，不再嵌套子菜单） -->
-        <aside class="w-[220px] bg-sidebar flex flex-col flex-shrink-0 border-r border-borderLine">
+        <aside id="legacy-ledger-menu" class="w-[220px] bg-sidebar flex flex-col flex-shrink-0 border-r border-borderLine">
             <!-- Logo区域 -->
             <div class="h-[72px] flex items-center px-4 border-b border-borderLine">
                 <div class="w-9 h-9 rounded bg-primary flex items-center justify-center mr-3">
@@ -160,7 +162,7 @@
             </header>
 
             <div class="flex flex-1 overflow-hidden">
-                <aside class="w-[260px] bg-white border-r border-borderLine overflow-y-auto p-6 shrink-0"><h3 class="font-semibold text-slate-800 mb-5 text-base">组织架构</h3><div class="pl-1"><div class="font-medium text-primary mb-4 flex items-center gap-2"><i class="fa fa-building"></i>鞍钢矿业公司</div><div class="pl-6 flex flex-col gap-4 text-sm text-slate-600"><div><i class="fa fa-industry mr-2"></i>齐大山铁矿</div><div><i class="fa fa-industry mr-2"></i>弓长岭铁矿</div><div><i class="fa fa-industry mr-2"></i>眼前山铁矿</div><div><i class="fa fa-building mr-2"></i>东鞍山分公司</div></div></div></aside>
+                <aside id="leadership-function-menu" class="w-[260px] bg-white border-r border-borderLine overflow-y-auto p-6 shrink-0"><h3 class="font-semibold text-slate-800 mb-5 text-base">组织架构</h3><div class="pl-1"><div class="font-medium text-primary mb-4 flex items-center gap-2"><i class="fa fa-building"></i>鞍钢矿业公司</div><div class="pl-6 flex flex-col gap-4 text-sm text-slate-600"><div><i class="fa fa-industry mr-2"></i>齐大山铁矿</div><div><i class="fa fa-industry mr-2"></i>弓长岭铁矿</div><div><i class="fa fa-industry mr-2"></i>眼前山铁矿</div><div><i class="fa fa-building mr-2"></i>东鞍山分公司</div></div></div></aside>
             <!-- 页面内容滚动区 -->
             <div class="flex-1 overflow-y-auto p-6 scrollbar-hide">
                 <!-- 筛选区域 -->

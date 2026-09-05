@@ -77,6 +77,11 @@
           ]
         },
         {
+          title: '防灾智盒部署',
+          icon: 'fa-shield',
+          href: '防灾智盒部署.html'
+        },
+        {
           title: '训练样本库',
           icon: 'fa-database',
           children: [
@@ -143,7 +148,9 @@
   const isSamePage = href => {
     if (!href) return false;
     const target = new URL(href, location.href);
-    return currentFile === decodeURIComponent(target.pathname.split('/').pop() || '') && location.search === target.search;
+    const targetFile = decodeURIComponent(target.pathname.split('/').pop() || '');
+    if (currentFile === '边缘盒子部署.html' && targetFile === '防灾智盒部署.html') return true;
+    return currentFile === targetFile && location.search === target.search;
   };
   const go = href => {
     const target = new URL(href, location.href);
