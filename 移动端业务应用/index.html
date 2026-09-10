@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#165DFF">
+  <title>无视频不作业 · 移动业务端</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="mobile-home.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div><p id="contextLabel">安全生产中心 · 白班</p><h1 id="pageTitle">工作台</h1></div>
+      <button class="icon-button" data-action="scan" aria-label="扫一扫"><svg><use href="#i-scan"/></svg></button>
+    </header>
+
+    <main id="app" aria-live="polite"></main>
+
+    <nav class="bottom-nav" aria-label="主导航">
+      <button class="nav-item active" data-page="home"><svg><use href="#i-home"/></svg><span>工作台</span></button>
+      <button class="nav-item" data-page="tasks"><span class="nav-badge">8</span><svg><use href="#i-task"/></svg><span>待办</span></button>
+      <button class="nav-item" data-page="work"><svg><use href="#i-briefcase"/></svg><span>作业</span></button>
+      <button class="nav-item" data-page="messages"><span class="nav-badge">5</span><svg><use href="#i-bell"/></svg><span>消息</span></button>
+      <button class="nav-item" data-page="profile"><svg><use href="#i-user"/></svg><span>我的</span></button>
+    </nav>
+  </div>
+
+  <div id="sheet" class="sheet-backdrop" hidden><section class="sheet" role="dialog" aria-modal="true"><div class="sheet-handle"></div><div id="sheetContent"></div></section></div>
+  <div id="toast" class="toast" hidden></div>
+
+  <svg class="svg-defs" aria-hidden="true">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z"/></symbol>
+    <symbol id="i-task" viewBox="0 0 24 24"><path d="M9 5h11M9 12h11M9 19h11M4 5h.01M4 12h.01M4 19h.01"/></symbol>
+    <symbol id="i-briefcase" viewBox="0 0 24 24"><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m-12 4h18M4 7h16a1 1 0 0 1 1 1v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a1 1 0 0 1 1-1Z"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-scan" viewBox="0 0 24 24"><path d="M4 9V5a1 1 0 0 1 1-1h4m6 0h4a1 1 0 0 1 1 1v4m0 6v4a1 1 0 0 1-1 1h-4m-6 0H5a1 1 0 0 1-1-1v-4M8 12h8"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 7h4l2-3h4l2 3h4a1 1 0 0 1 1 1v11H3V8a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="4"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2"/></symbol>
+  </svg>
+  <script src="app.js"></script>
+</body>
+</html>
